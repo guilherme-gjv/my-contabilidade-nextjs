@@ -39,8 +39,6 @@ interface ILoginResponseData {
 
 export const AuthContext = createContext({} as IAuthContext);
 
-const paths = { auth: { login: "/auth/login", signup: "/auth/cadastrar" } };
-
 export function AuthProvider({ children }: AuthProviderProps) {
   const { push, asPath } = useRouter();
 
@@ -107,11 +105,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUserFromApi(userId);
     } else {
       setIsAuthenticated(false);
-      if (!Object.values(paths.auth).includes(asPath)) {
-        push(paths.auth.login);
-      }
     }
-  }, [asPath, push]);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, isAuthenticated, signIn, signOut }}>
