@@ -1,6 +1,6 @@
 import * as express from "express";
 import * as next from "next";
-import axios, { AxiosInstance } from "axios";
+import axios, { AxiosError, AxiosInstance } from "axios";
 import { parseCookies } from "nookies";
 
 export function getAPIClient(
@@ -27,3 +27,14 @@ export function getAPIClient(
 
   return api;
 }
+
+export const getErrorFromAPI = (error: AxiosError) => {
+  if (error.response?.data) {
+    const message = (
+      error.response.data as {
+        error: string;
+      }
+    ).error;
+    return message;
+  }
+};
