@@ -1,15 +1,15 @@
 import { CustomToastTypes, customToast } from "@/services/customToast";
-import { AuthContext } from "@/contexts/AuthContext";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { parseCookies } from "nookies";
-import { useCallback, useContext } from "react";
-import { useForm } from "react-hook-form";
+import { useCallback } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { getErrorMessage } from "@/functions/getErrorMessage";
 import Link from "next/link";
 import { api } from "@/services/api";
+import CpfCnpjInput from "@/components/inputs/CpfCnpjInput";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { "mycontabilidade.token": token } = parseCookies(ctx);
@@ -66,10 +66,10 @@ type ISignupFormData = z.infer<typeof validationSchema>;
 const Signup: React.FC = () => {
   //* hooks
   const { push } = useRouter();
-  const { signIn } = useContext(AuthContext);
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<ISignupFormData>({ resolver: zodResolver(validationSchema) });
 
@@ -81,8 +81,6 @@ const Signup: React.FC = () => {
         CustomToastTypes.LOADING
       );
       try {
-        console.log("carregando");
-
         await api.post("/user", { name, email, cpf, password });
         updateToast({
           render: "Registrado com sucesso!",
@@ -169,16 +167,17 @@ const Signup: React.FC = () => {
               htmlFor="cpf"
               className="block text-sm font-medium leading-6 text-gray-900"
             >
-              CPF/CPNJ {"(opcional)"}
+              CPF/CNPJ {"(opcional)"}
             </label>
             <div className="mt-2">
-              <input
-                id="cpf"
-                {...register("cpf")}
-                type="cpf"
-                autoComplete="cpf"
-                className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              <Controller
+                name="cpf"
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <CpfCnpjInput value={value || ""} onChange={onChange} />
+                )}
               />
+
               {errors.cpf && (
                 <p className="mt-1 text-red-500">{errors.cpf?.message}</p>
               )}
