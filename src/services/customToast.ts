@@ -52,5 +52,10 @@ export const customToast = (
   const updateToast = (updateOptions: UpdateOptions) => {
     toast.update(toastId, updateOptions);
   };
-  return { toastId, updateToast };
+
+  const removeToast = () => {
+    toast.dismiss(toastId);
+  };
+
+  return { toastId, updateToast, removeToast };
 };
