@@ -81,7 +81,11 @@ const Signup: React.FC = () => {
         CustomToastTypes.LOADING
       );
       try {
-        await api.post("/user", { name, email, cpf, password });
+        let requestData = { name, email, cpf, password };
+        if (!cpf) {
+          delete requestData["cpf"];
+        }
+        await api.post("/user", requestData);
         updateToast({
           render: "Registrado com sucesso!",
           type: "success",
