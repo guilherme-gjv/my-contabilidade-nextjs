@@ -4,11 +4,10 @@ import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { parseCookies } from "nookies";
 import { useCallback, useContext } from "react";
-import { AxiosError } from "axios";
-import { getErrorFromAPI } from "@/services/axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { getErrorMessage } from "@/functions/getErrorMessage";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { "mycontabilidade.token": token } = parseCookies(ctx);
@@ -69,8 +68,7 @@ const Login: React.FC = () => {
         push("/");
       } catch (error) {
         updateToast({
-          render:
-            "Houve um erro no login! " + getErrorFromAPI(error as AxiosError),
+          render: "Houve um erro no login! " + getErrorMessage(error),
           type: "error",
           isLoading: false,
           autoClose: 5000,
