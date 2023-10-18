@@ -1,9 +1,13 @@
-import Image from "next/image";
 import { Inter } from "next/font/google";
-import { useContext } from "react";
-import { AuthContext } from "@/contexts/AuthContext";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { GetServerSideProps } from "next";
 import { parseCookies } from "nookies";
+import TableComponent from "@/components/DataTable";
+import { ColumnDef } from "@tanstack/react-table";
+import tableData from "@/partials/tableColumns/invoices";
+import { api } from "@/services/api";
+import { getErrorMessage } from "@/functions/getErrorMessage";
+import { AuthContext } from "@/contexts/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,14 +23,76 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
 
-  return {
-    props: {},
-  };
+  const page = ctx.query.page ? parseInt(ctx.query.page as string, 10) : 1;
+  const rows = ctx.query.rows ? parseInt(ctx.query.rows as string) : 10;
+
+  try {
+    api.defaults.headers.Authorization = `Bearer ${token}`;
+    const { data } = await api.get(`/invoice`, {
+      params: {
+        rows,
+        page,
+      },
+    });
+
+    const invoicesWithValue = data.data.map((invoice: any) => {
+      let value = 0;
+
+      invoice.items.forEach((item: any) => {
+        value += item.price;
+      });
+
+      const invoiceWithValue = {
+        ...invoice,
+        value,
+      };
+      return invoiceWithValue;
+    });
+
+    return {
+      props: {
+        invoices: invoicesWithValue,
+        page,
+        rows,
+        aLength: 98, // data.data.count,
+      },
+    };
+  } catch (e) {
+    console.log((e as Error).message);
+
+    return {
+      redirect: {
+        destination: "/auth/login?error=" + getErrorMessage(e),
+        permanent: false,
+      },
+      props: {},
+    };
+  }
 };
 
-export default function Home() {
-  const { signOut } = useContext(AuthContext);
+const Home: React.FC<{
+  page: number;
+  rows: number;
+  invoices?: any[];
+  aLength: number;
+  //filterData?: any;
+  //filterStatus: boolean;
+}> = ({ invoices, aLength, page, rows }) => {
+  const pagesAmount = useMemo(() => {
+    return !(Math.ceil(aLength / rows) === 0) ? Math.ceil(aLength / rows) : 1;
+  }, [aLength, rows]);
 
+  const [rowsPerPage, setRowsPerPage] = useState(rows);
+  const [currentPage, setCurrentPage] = useState(
+    page > pagesAmount ? pagesAmount : page
+  );
+  const [list, setList] = useState(invoices);
+
+  useEffect(() => {
+    setList(invoices);
+  }, [invoices]);
+
+  const { signOut } = useContext(AuthContext);
   //* render
   return (
     <div className="flex flex-col h-screen bg-gray-100">
@@ -96,12 +162,12 @@ export default function Home() {
             </a>
           </nav>
 
-          <a
+          <button
+            onClick={signOut}
             className="block text-gray-500 py-2.5 px-4 my-2 rounded transition duration-200 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-cyan-500 hover:text-white mt-auto"
-            href="#"
           >
-            <i className="fas fa-sign-out-alt mr-2"></i>Cerrar sesión
-          </a>
+            <i className="fas fa-sign-out-alt mr-2"></i>Logout
+          </button>
 
           <div className="bg-gradient-to-r from-cyan-300 to-cyan-500 h-px mt-2"></div>
 
@@ -158,6 +224,28 @@ export default function Home() {
             </h2>
             <div className="my-1"></div>
             <div className="bg-gradient-to-r from-cyan-300 to-cyan-500 h-px mb-6"></div>
+            <TableComponent
+              wrapperDivClasses="relative shadow-lg"
+              tableClasses="relative rounded-t-lg  rounded-b-none is-hoverable w-full text-left card mt-3 is-scrollbar-hidden shadow-lg min-w-[700px]"
+              headRowClasses="text-sm leading-normal"
+              rowClasses="hover:bg-grey-lighter"
+              cellClasses="py-2 px-4 border-b border-grey-light"
+              headersClasses="py-2 px-4 bg-grey-lightest font-bold uppercase text-sm text-grey-light border-b border-grey-light"
+              //tableOptions={tableSelectOptions}
+              rowsPerPageChange={setRowsPerPage}
+              rowsPerPage={rowsPerPage}
+              isPaginated
+              tableOptionsLabel="Ação"
+              pagesAmount={pagesAmount}
+              currentPage={currentPage}
+              totalRows={aLength}
+              onPaginationChange={setCurrentPage}
+              data={list ? (list as Record<string, unknown>[]) : []}
+              isListEmpty={list?.length === 0 || !list}
+              columns={
+                tableData as ColumnDef<Record<string, unknown>, unknown>[]
+              }
+            ></TableComponent>
             <table className="w-full table-auto text-sm">
               <thead>
                 <tr className="text-sm leading-normal">
@@ -338,7 +426,7 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};
 
 {
   /* {<!-- Script para las gráficas -->
@@ -390,3 +478,5 @@ export default function Home() {
     });
 </script>} */
 }
+
+export default Home;
