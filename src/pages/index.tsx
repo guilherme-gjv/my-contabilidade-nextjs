@@ -1,5 +1,5 @@
 import { Inter } from "next/font/google";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { GetServerSideProps } from "next";
 import { parseCookies } from "nookies";
 import TableComponent from "@/components/DataTable";
@@ -8,6 +8,7 @@ import tableData from "@/partials/tableColumns/invoices";
 import { api } from "@/services/api";
 import { getErrorMessage } from "@/functions/getErrorMessage";
 import { AuthContext } from "@/contexts/AuthContext";
+import { useRouter } from "next/router";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -88,11 +89,23 @@ const Home: React.FC<{
   );
   const [list, setList] = useState(invoices);
 
+  const { push } = useRouter();
+
   useEffect(() => {
     setList(invoices);
   }, [invoices]);
 
   const { signOut } = useContext(AuthContext);
+
+  const handleOnRequestSearch = useCallback(
+    () => push(`/?page=${currentPage}${rowsPerPage && "&rows=" + rowsPerPage}`),
+    [currentPage, push, rowsPerPage]
+  );
+
+  useEffect(() => {
+    handleOnRequestSearch();
+  }, []);
+
   //* render
   return (
     <div className="flex flex-col h-screen bg-gray-100">
@@ -228,9 +241,9 @@ const Home: React.FC<{
               wrapperDivClasses="relative shadow-lg"
               tableClasses="relative rounded-t-lg  rounded-b-none is-hoverable w-full text-left card mt-3 is-scrollbar-hidden shadow-lg min-w-[700px]"
               headRowClasses="text-sm leading-normal"
-              rowClasses="hover:bg-grey-lighter"
-              cellClasses="py-2 px-4 border-b border-grey-light"
-              headersClasses="py-2 px-4 bg-grey-lightest font-bold uppercase text-sm text-grey-light border-b border-grey-light"
+              rowClasses="hover:bg-gray-50 font-light"
+              cellClasses="py-2 px-4 border-b border-gray-200 font-light"
+              headersClasses="py-2 px-4 bg-gray-100 font-bold uppercase text-sm text-black border-b border-grey-light"
               //tableOptions={tableSelectOptions}
               rowsPerPageChange={setRowsPerPage}
               rowsPerPage={rowsPerPage}
