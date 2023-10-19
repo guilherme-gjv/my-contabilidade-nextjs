@@ -1,4 +1,5 @@
 import { ColumnDef } from "@tanstack/react-table";
+import { mask } from "remask";
 
 interface TableColumn {
   value?: string;
@@ -56,7 +57,10 @@ const tableData: ColumnDef<TableColumn>[] = [
         ),
         cell: (info) => (
           <div className="flex font-thin flex-row items-center justify-start gap-2 text-spacie-rose">
-            {info?.row?.original.enterpriseCnpj}
+            {mask(info?.row?.original.enterpriseCnpj || "", [
+              "999.999.999-99",
+              "99.999.999/9999-99",
+            ])}
           </div>
         ),
         accessorFn: (row) => row.enterpriseCnpj,
