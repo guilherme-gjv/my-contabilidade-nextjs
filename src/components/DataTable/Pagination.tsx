@@ -100,8 +100,13 @@ const Pagination: React.FC<PaginationProps> = ({
     pagesAmount &&
     rowsPerPage &&
     setRowsPerPage ? (
-    <div className="shadow-lg relative w-full min-w-full rounded-b-lg flex flex-col justify-between space-y-4 px-4 py-4 sm:flex-row sm:items-center sm:space-y-0 sm:px-5 text-navy-700 dark:text-navy-100 bg-white dark:bg-navy-700 transition-colors ">
-      <div className="flex justify-between space-x-2 text-xs">
+    <div className="relative w-full min-w-full rounded-b-lg flex flex-col justify-between space-y-4 px-4 py-4 sm:items-center sm:space-y-0 sm:px-5 text-navy-700 dark:text-navy-100 bg-white dark:bg-navy-700 transition-colors ">
+      <div className="px-5 py-5 bg-white flex flex-col xs:flex-row items-center xs:justify-between">
+        <p className="text-xs xs:text-sm text-gray-900 mb-2">
+          {!totalRows || totalRows === 0
+            ? "Nenhum resultado encontrado."
+            : `Mostrando ${pageRows} de ${totalRows}`}
+        </p>
         <select
           title="Selecione o número de linhas por página"
           value={rowsPerPage}
@@ -111,17 +116,12 @@ const Pagination: React.FC<PaginationProps> = ({
           aria-label="label for the select"
           className="form-select rounded border border-slate-300 bg-white px-2 py-1 pr-6 hover:border-slate-400 focus:border-primary dark:border-navy-450 dark:bg-navy-700 dark:hover:border-navy-400 dark:focus:border-accent"
         >
-          {[10, 25, 50, 100].map((pageSize) => (
+          {[10, 25, 50].map((pageSize) => (
             <option key={pageSize} value={pageSize}>
               {pageSize}
             </option>
           ))}
         </select>
-        <p className="font-normal text-base">
-          {!totalRows || totalRows === 0
-            ? "Nenhum resultado encontrado."
-            : `Mostrando ${pageRows} de ${totalRows}`}
-        </p>
       </div>
       <ol className="pagination flex space-x-1.5">
         <li>
@@ -130,7 +130,7 @@ const Pagination: React.FC<PaginationProps> = ({
             title="Ir para a primeira página"
             onClick={navigateFirstPage}
             disabled={currentPage === 1}
-            className="flex h-8 w-8 -space-x-2 items-center justify-center rounded bg-gray-200 text-slate-500 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:bg-navy-500 dark:text-navy-200 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
+            className="flex h-8 w-8 -space-x-2 items-center text-sm justify-center rounded text-indigo-50  hover:bg-indigo-500 bg-indigo-600 font-semibold transition duration-150 focus:bg-indigo-500 active:bg-indigo-500/80"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -168,7 +168,7 @@ const Pagination: React.FC<PaginationProps> = ({
             title="Página anterior"
             onClick={navigatePreviousPage}
             disabled={pageNumbers[0] === 1}
-            className="flex h-8 w-8 items-center justify-center rounded bg-gray-200 text-slate-500 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:bg-navy-500 dark:text-navy-200 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
+            className="flex h-8 w-8 -space-x-2 items-center text-sm justify-center rounded text-indigo-50  hover:bg-indigo-500 bg-indigo-600 font-semibold transition duration-150 focus:bg-indigo-500 active:bg-indigo-500/80"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -193,9 +193,9 @@ const Pagination: React.FC<PaginationProps> = ({
                 type="button"
                 className={clsx(
                   currentPage === pageIndex
-                    ? "bg-primary hover:bg-gray-200 focus:bg-gray-200 active:bg-gray-200/90 dark:bg-gray-400 dark:hover:bg-gray-400 dark:focus:bg-gray-400 dark:active:bg-gray-400/90"
-                    : "bg-gray-300 hover:bg-gray-400 focus:bg-gray-300 active:bg-gray-300/80 dark:bg-navy-500 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90",
-                  "flex h-8 min-w-[2rem] items-center justify-center rounded px-3 leading-tight text-navy-750 dark:text-white transition-colors "
+                    ? "bg-indigo-400 hover:bg-indigo-400 focus:bg-indigo-400 active:bg-indigo-400/90"
+                    : "bg-indigo-600 hover:bg-indigo-400 focus:bg-indigo-600 active:bg-indigo-600/80",
+                  "flex h-8 min-w-[2rem] items-center justify-center rounded px-3 leading-tight text-white transition-colors "
                 )}
                 onClick={() => onPaginationChangeCallback(pageIndex)}
               >
@@ -215,7 +215,7 @@ const Pagination: React.FC<PaginationProps> = ({
               pgsAmount <= 5 ||
               pageNumbers[pageNumbers.length - 1] === pgsAmount
             }
-            className="flex h-8 w-8 items-center justify-center rounded bg-gray-200 text-slate-500 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:bg-navy-500 dark:text-navy-200 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
+            className="flex h-8 w-8 -space-x-2 items-center text-sm justify-center rounded text-indigo-50  hover:bg-indigo-500 bg-indigo-600 font-semibold transition duration-150 focus:bg-indigo-500 active:bg-indigo-500/80"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -239,7 +239,7 @@ const Pagination: React.FC<PaginationProps> = ({
             title="Ir para a última página"
             onClick={navigateLastPage}
             disabled={currentPage === pgsAmount}
-            className="flex h-8 w-8 -space-x-2 items-center justify-center rounded bg-gray-200 text-slate-500 transition-colors hover:bg-slate-300 focus:bg-slate-300 active:bg-slate-300/80 dark:bg-navy-500 dark:text-navy-200 dark:hover:bg-navy-450 dark:focus:bg-navy-450 dark:active:bg-navy-450/90"
+            className="flex h-8 w-8 -space-x-2 items-center text-sm justify-center rounded text-indigo-50  hover:bg-indigo-500 bg-indigo-600 font-semibold transition duration-150 focus:bg-indigo-500 active:bg-indigo-500/80"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

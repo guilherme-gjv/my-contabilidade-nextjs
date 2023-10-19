@@ -232,18 +232,53 @@ const Home: React.FC<{
           </div>
 
           <div className="mt-8 bg-white p-4 shadow rounded-lg">
-            <h2 className="text-gray-500 text-lg font-semibold pb-4">
-              Autorizaciones Pendientes
-            </h2>
             <div className="my-1"></div>
-            <div className="bg-gradient-to-r from-cyan-300 to-cyan-500 h-px mb-6"></div>
+            <div className=" flex items-center justify-between pb-6">
+              <div>
+                <h2 className="text-gray-500 text-lg font-semibold">
+                  Products Oder
+                </h2>
+                <span className="text-xs">All products item</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex bg-gray-50 items-center p-2 rounded-md">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-gray-400"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <input
+                    className="bg-gray-50 outline-none ml-1 block "
+                    type="text"
+                    name=""
+                    id=""
+                    placeholder="search..."
+                  />
+                </div>
+                <div className="lg:ml-40 ml-10 space-x-8">
+                  <button className="bg-indigo-600 px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer">
+                    New Report
+                  </button>
+                  <button className="bg-indigo-600 px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer">
+                    Create
+                  </button>
+                </div>
+              </div>
+            </div>
             <TableComponent
-              wrapperDivClasses="relative shadow-lg"
-              tableClasses="relative rounded-t-lg  rounded-b-none is-hoverable w-full text-left card mt-3 is-scrollbar-hidden shadow-lg min-w-[700px]"
-              headRowClasses="text-sm leading-normal"
-              rowClasses="hover:bg-gray-50 font-light"
-              cellClasses="py-2 px-4 border-b border-gray-200 font-light"
-              headersClasses="py-2 px-4 bg-gray-100 font-bold uppercase text-sm text-black border-b border-grey-light"
+              wrapperDivClasses="relative shadow rounded"
+              tableClasses="min-w-full leading-normal"
+              headRowClasses="text-sm leading-normal font-thin"
+              rowClasses="hover:bg-gray-50 font-thin"
+              cellClasses="px-5 py-5 border-b border-gray-200 text-sm"
+              headersClasses="px-5 py-3 border-b-2 first:rounded-l last:rounded-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
               //tableOptions={tableSelectOptions}
               rowsPerPageChange={setRowsPerPage}
               rowsPerPage={rowsPerPage}
@@ -259,237 +294,11 @@ const Home: React.FC<{
                 tableData as ColumnDef<Record<string, unknown>, unknown>[]
               }
             ></TableComponent>
-            <table className="w-full table-auto text-sm">
-              <thead>
-                <tr className="text-sm leading-normal">
-                  <th className="py-2 px-4 bg-grey-lightest font-bold uppercase text-sm text-grey-light border-b border-grey-light">
-                    Foto
-                  </th>
-                  <th className="py-2 px-4 bg-grey-lightest font-bold uppercase text-sm text-grey-light border-b border-grey-light">
-                    Nombre
-                  </th>
-                  <th className="py-2 px-4 bg-grey-lightest font-bold uppercase text-sm text-grey-light border-b border-grey-light">
-                    Rol
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="hover:bg-grey-lighter">
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    <img
-                      src="https://via.placeholder.com/40"
-                      alt="Foto Perfil"
-                      className="rounded-full h-10 w-10"
-                    />
-                  </td>
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    Juan Pérez
-                  </td>
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    Comercio
-                  </td>
-                </tr>
-                <tr className="hover:bg-grey-lighter">
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    <img
-                      src="https://via.placeholder.com/40"
-                      alt="Foto Perfil"
-                      className="rounded-full h-10 w-10"
-                    />
-                  </td>
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    María Gómez
-                  </td>
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    Usuario
-                  </td>
-                </tr>
-                <tr className="hover:bg-grey-lighter">
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    <img
-                      src="https://via.placeholder.com/40"
-                      alt="Foto Perfil"
-                      className="rounded-full h-10 w-10"
-                    />
-                  </td>
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    Carlos López
-                  </td>
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    Usuario
-                  </td>
-                </tr>
-                <tr className="hover:bg-grey-lighter">
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    <img
-                      src="https://via.placeholder.com/40"
-                      alt="Foto Perfil"
-                      className="rounded-full h-10 w-10"
-                    />
-                  </td>
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    Laura Torres
-                  </td>
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    Comercio
-                  </td>
-                </tr>
-                <tr className="hover:bg-grey-lighter">
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    <img
-                      src="https://via.placeholder.com/40"
-                      alt="Foto Perfil"
-                      className="rounded-full h-10 w-10"
-                    />
-                  </td>
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    Ana Ramírez
-                  </td>
-                  <td className="py-2 px-4 border-b border-grey-light">
-                    Usuario
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div className="text-right mt-4">
-              <button className="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold py-2 px-4 rounded">
-                Ver más
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-8 bg-white p-4 shadow rounded-lg">
-            <div className="bg-white p-4 rounded-md mt-4">
-              <h2 className="text-gray-500 text-lg font-semibold pb-4">
-                Transacciones
-              </h2>
-              <div className="my-1"></div>
-              <div className="bg-gradient-to-r from-cyan-300 to-cyan-500 h-px mb-6"></div>
-              <table className="w-full table-auto text-sm">
-                <thead>
-                  <tr className="text-sm leading-normal">
-                    <th className="py-2 px-4 bg-grey-lightest font-bold uppercase text-sm text-grey-light border-b border-grey-light">
-                      Nombre
-                    </th>
-                    <th className="py-2 px-4 bg-grey-lightest font-bold uppercase text-sm text-grey-light border-b border-grey-light">
-                      Fecha
-                    </th>
-                    <th className="py-2 px-4 bg-grey-lightest font-bold uppercase text-sm text-grey-light border-b border-grey-light text-right">
-                      Monto
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="hover:bg-grey-lighter">
-                    <td className="py-2 px-4 border-b border-grey-light">
-                      Carlos Sánchez
-                    </td>
-                    <td className="py-2 px-4 border-b border-grey-light">
-                      27/07/2023
-                    </td>
-                    <td className="py-2 px-4 border-b border-grey-light text-right">
-                      $1500
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-grey-lighter">
-                    <td className="py-2 px-4 border-b border-grey-light">
-                      Pedro Hernández
-                    </td>
-                    <td className="py-2 px-4 border-b border-grey-light">
-                      02/08/2023
-                    </td>
-                    <td className="py-2 px-4 border-b border-grey-light text-right">
-                      $1950
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-grey-lighter">
-                    <td className="py-2 px-4 border-b border-grey-light">
-                      Sara Ramírez
-                    </td>
-                    <td className="py-2 px-4 border-b border-grey-light">
-                      03/08/2023
-                    </td>
-                    <td className="py-2 px-4 border-b border-grey-light text-right">
-                      $1850
-                    </td>
-                  </tr>
-                  <tr className="hover:bg-grey-lighter">
-                    <td className="py-2 px-4 border-b border-grey-light">
-                      Daniel Torres
-                    </td>
-                    <td className="py-2 px-4 border-b border-grey-light">
-                      04/08/2023
-                    </td>
-                    <td className="py-2 px-4 border-b border-grey-light text-right">
-                      $2300
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <div className="text-right mt-4">
-                <div className="text-right mt-4">
-                  <button className="bg-cyan-500 hover:bg-cyan-600 text-white font-semibold py-2 px-4 rounded">
-                    Ver más
-                  </button>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
     </div>
   );
 };
-
-{
-  /* {<!-- Script para las gráficas -->
-<script>
-    // Gráfica de Usuarios
-    var usersChart = new Chart(document.getElementById('usersChart'), {
-        type: 'doughnut',
-        data: {
-            labels: ['Nuevos', 'Registrados'],
-            datasets: [{
-                data: [30, 65],
-                backgroundColor: ['#00F0FF', '#8B8B8D'],
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            legend: {
-                position: 'bottom' // Ubicar la leyenda debajo del círculo
-            }
-        }
-    });
-
-    // Gráfica de Comercios
-    var commercesChart = new Chart(document.getElementById('commercesChart'), {
-        type: 'doughnut',
-        data: {
-            labels: ['Nuevos', 'Registrados'],
-            datasets: [{
-                data: [60, 40],
-                backgroundColor: ['#FEC500', '#8B8B8D'],
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            legend: {
-                position: 'bottom' // Ubicar la leyenda debajo del círculo
-            }
-        }
-    });
-
-    // Agregar lógica para mostrar/ocultar la navegación lateral al hacer clic en el ícono de menú
-    const menuBtn = document.getElementById('menuBtn');
-    const sideNav = document.getElementById('sideNav');
-
-    menuBtn.addEventListener('click', () => {
-        sideNav.classList.toggle('hidden'); // Agrega o quita la clase 'hidden' para mostrar u ocultar la navegación lateral
-    });
-</script>} */
-}
 
 export default Home;
