@@ -6,7 +6,6 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  Row,
   RowModel,
   SortingState,
   Table,
@@ -15,7 +14,6 @@ import {
 import clsx from "clsx";
 import { FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
 import Pagination from "./Pagination";
-import { Menu } from "@headlessui/react";
 import { useState } from "react";
 
 interface TableProps {
@@ -38,26 +36,6 @@ interface TableProps {
   isListEmpty?: boolean;
   emptyListMessage?: string;
   emptyListMessageClasses?: string;
-  tableOptions?: {
-    title?: string;
-    titleClass?: string;
-    icon?: React.ReactNode;
-    menuClass?: string;
-    menuButtonClass?: string;
-    menuItemsBoxClass?: string;
-    menuItemsBoxClassRegular?: string;
-    menuItemsBoxClassLast?: string;
-    menuItemClass?: string;
-    menuItems?: {
-      key?: string;
-      className?: string;
-      label?: string;
-      onClick?: (row: Row<Record<string, unknown>>) => void;
-    }[];
-    isDisabled?: (values: Record<string, unknown>) => boolean;
-  };
-  tableOptionsInDropdown?: boolean;
-  tableOptionsLabel?: string;
   headerRowsThatAppearInMobile?: string[];
   onPaginationChange?: (page: number) => void;
   currentPage?: number;
@@ -74,16 +52,11 @@ const TableComponent: React.FC<TableProps> = ({
   data,
   columns,
   isPaginated,
-  tableOptions,
   onPaginationChange,
-  isListEmpty,
-  emptyListMessage,
-  emptyListMessageClasses,
   wrapperDivClasses,
   pagesAmount,
   currentPage,
   tableClasses,
-  tableOptionsLabel,
   totalRows,
   rowsPerPage,
   rowsPerPageChange,
@@ -146,20 +119,13 @@ const TableComponent: React.FC<TableProps> = ({
                         </th>
                       );
                     })}
-                    {tableOptions && (
-                      <th className={headersClasses}>
-                        {tableOptionsLabel || ""}
-                      </th>
-                    )}
                   </tr>
                 )
               );
             })}
           </thead>
           <tbody className="overflow-x-hidden">
-            {table.getRowModel().rows.map((row, index) => {
-              const lastIndex = table.getRowModel().rows.length - 1;
-
+            {table.getRowModel().rows.map((row) => {
               return (
                 <tr key={row.id} className={rowClasses}>
                   {row.getVisibleCells().map((cell) => {
@@ -172,45 +138,6 @@ const TableComponent: React.FC<TableProps> = ({
                       </td>
                     );
                   })}
-                  {tableOptions && (
-                    <td className={cellClasses}>
-                      <Menu as="div" className={tableOptions.menuClass}>
-                        <Menu.Button
-                          type="button"
-                          className={tableOptions.menuButtonClass}
-                        >
-                          {tableOptions.icon}
-                        </Menu.Button>
-                        <Menu.Items
-                          className={clsx(
-                            index === lastIndex
-                              ? tableOptions.menuItemsBoxClassLast
-                              : tableOptions.menuItemsBoxClassRegular,
-                            tableOptions.menuItemsBoxClass
-                          )}
-                        >
-                          {tableOptions.menuItems?.map((item) => {
-                            return (
-                              <Menu.Item key={item.key}>
-                                <button
-                                  type="button"
-                                  className={item.className}
-                                  onClick={() =>
-                                    item.onClick &&
-                                    item.onClick(
-                                      row as Row<Record<string, unknown>>
-                                    )
-                                  }
-                                >
-                                  {item.label}
-                                </button>
-                              </Menu.Item>
-                            );
-                          })}
-                        </Menu.Items>
-                      </Menu>
-                    </td>
-                  )}
                 </tr>
               );
             })}

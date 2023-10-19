@@ -2,14 +2,14 @@ import { Inter } from "next/font/google";
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { GetServerSideProps } from "next";
 import { parseCookies } from "nookies";
-import TableComponent from "@/components/DataTable";
-import { ColumnDef } from "@tanstack/react-table";
-import tableData from "@/partials/tableColumns/invoices";
 import { api } from "@/services/api";
 import { getErrorMessage } from "@/functions/getErrorMessage";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useRouter } from "next/router";
 import { Menu } from "@headlessui/react";
+import TableComponent from "@/components/DataTable";
+import { ColumnDef } from "@tanstack/react-table";
+import tableData from "@/partials/tableColumns/invoices";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -206,11 +206,9 @@ const Home: React.FC<{
               rowClasses="hover:bg-gray-50 font-thin"
               cellClasses="px-5 py-5 border-b border-gray-200 text-sm"
               headersClasses="px-5 py-3 border-b-2 first:rounded-l last:rounded-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
-              //tableOptions={tableSelectOptions}
               rowsPerPageChange={setRowsPerPage}
               rowsPerPage={rowsPerPage}
               isPaginated
-              tableOptionsLabel="Ação"
               pagesAmount={pagesAmount}
               currentPage={currentPage}
               totalRows={aLength}
