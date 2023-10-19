@@ -17,9 +17,7 @@ const tableData: ColumnDef<TableColumn>[] = [
       {
         id: "id",
         header: () => (
-          <span className="self-start text-left text-sm text-strong-blue px-1.5">
-            #
-          </span>
+          <span className="self-start text-left text-sm px-1.5">#</span>
         ),
         cell: (info) => (
           <>
@@ -36,12 +34,10 @@ const tableData: ColumnDef<TableColumn>[] = [
       {
         id: "total_value",
         header: () => (
-          <span className="self-start text-left text-sm text-strong-blue">
-            Valor Total
-          </span>
+          <span className="self-start text-left text-sm">Valor Total</span>
         ),
         cell: (info) => (
-          <div className="flex font-thin flex-row items-center justify-start gap-2 text-spacie-rose">
+          <div className="flex font-thin flex-row items-center justify-start gap-2">
             {info?.row?.original.value}
           </div>
         ),
@@ -51,12 +47,10 @@ const tableData: ColumnDef<TableColumn>[] = [
       {
         id: "enterprise_cnpj",
         header: () => (
-          <span className="self-start text-left text-sm text-strong-blue">
-            CNPJ da Empresa
-          </span>
+          <span className="self-start text-left text-sm">CNPJ da Empresa</span>
         ),
         cell: (info) => (
-          <div className="flex font-thin flex-row items-center justify-start gap-2 text-spacie-rose">
+          <div className="flex font-thin flex-row items-center justify-start gap-2">
             {mask(info?.row?.original.enterpriseCnpj || "", [
               "999.999.999-99",
               "99.999.999/9999-99",
@@ -69,12 +63,10 @@ const tableData: ColumnDef<TableColumn>[] = [
       {
         id: "description",
         header: () => (
-          <span className="self-start text-left text-sm text-strong-blue">
-            Descrição
-          </span>
+          <span className="self-start text-left text-sm">Descrição</span>
         ),
         cell: (info) => (
-          <div className="flex font-thin flex-row items-center justify-start gap-2 text-spacie-rose">
+          <div className="flex font-thin flex-row items-center justify-start gap-2">
             {info?.row?.original.description}
           </div>
         ),
@@ -84,12 +76,10 @@ const tableData: ColumnDef<TableColumn>[] = [
       {
         id: "createdAt",
         header: () => (
-          <span className="self-start text-left text-sm text-strong-blue">
-            Criado Em
-          </span>
+          <span className="self-start text-left text-sm">Criado Em</span>
         ),
         cell: (info) => (
-          <div className="flex font-thin flex-row items-center justify-start gap-2 text-spacie-rose">
+          <div className="flex font-thin flex-row items-center justify-start gap-2">
             {info?.row?.original.createdAt?.toString()}
           </div>
         ),
@@ -99,12 +89,10 @@ const tableData: ColumnDef<TableColumn>[] = [
       {
         id: "updatedAt",
         header: () => (
-          <span className="self-start text-left text-sm text-strong-blue">
-            Atualizado em
-          </span>
+          <span className="self-start text-left text-sm">Atualizado em</span>
         ),
         cell: (info) => (
-          <div className="flex font-thin flex-row items-center justify-start gap-2 text-spacie-rose">
+          <div className="flex font-thin flex-row items-center justify-start gap-2">
             {info?.row?.original.updatedAt?.toString()}
           </div>
         ),
