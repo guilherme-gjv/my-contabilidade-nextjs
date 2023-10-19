@@ -89,9 +89,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     const setUserFromApi = async (userId: string) => {
-      const result = await api.get<UserData>("/user/" + userId);
-      if (result.status === 200) {
-        setUser(result.data);
+      const { data, status } = await api.get<{ data: UserData }>(
+        "/user/" + userId
+      );
+      if (status === 200) {
+        setUser(data.data);
         setIsAuthenticated(true);
       } else {
         setIsAuthenticated(false);
