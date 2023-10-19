@@ -2,6 +2,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { mask } from "remask";
 
 interface TableColumn {
+  id?: string;
   value?: string;
   enterpriseCnpj?: string;
   description?: string;
@@ -29,6 +30,17 @@ const tableData: ColumnDef<TableColumn>[] = [
             </div>
           </>
         ),
+        footer: (props) => props.column.id,
+      },
+      {
+        id: "invoice_id",
+        header: () => <span className="self-start text-left text-sm">ID</span>,
+        cell: (info) => (
+          <div className="flex font-thin flex-row items-center justify-start gap-2">
+            {info?.row?.original.id}
+          </div>
+        ),
+        accessorFn: (row) => row.id,
         footer: (props) => props.column.id,
       },
       {
