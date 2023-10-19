@@ -9,6 +9,7 @@ import { api } from "@/services/api";
 import { getErrorMessage } from "@/functions/getErrorMessage";
 import { AuthContext } from "@/contexts/AuthContext";
 import { useRouter } from "next/router";
+import { Menu } from "@headlessui/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -95,7 +96,7 @@ const Home: React.FC<{
     setList(invoices);
   }, [invoices]);
 
-  const { signOut } = useContext(AuthContext);
+  const { signOut, user } = useContext(AuthContext);
 
   const handleOnRequestSearch = useCallback(
     () => push(`/?page=${currentPage}${rowsPerPage && "&rows=" + rowsPerPage}`),
@@ -109,20 +110,47 @@ const Home: React.FC<{
   //* render
   return (
     <div className="flex flex-col h-screen bg-gray-100">
-      <div className="bg-white text-white shadow w-full p-2 flex items-center justify-between">
-        <div className="flex items-center">
+      <div className="bg-white text-black shadow w-full p-2 flex items-center justify-between">
+        <div className="flex items-center justify-between  w-full">
           <div className="flex items-center">
             <img
-              src="https://www.emprenderconactitud.com/img/POC%20WCS%20(1).png"
+              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
               alt="Logo"
-              className="w-28 h-18 mr-2"
+              className="w-16 h-16 object-contain rounded-full mr-2"
             />
-            <h2 className="font-bold text-xl">Nombre de la Aplicación</h2>
+            <h2 className="font-bold text-xl">My Contabilidade</h2>
           </div>
-          <div className="md:hidden flex items-center">
-            <button id="menuBtn">
-              <i className="fas fa-bars text-gray-500 text-lg"></i>
-            </button>
+          <div className="relative">
+            <Menu>
+              <Menu.Button>
+                <img
+                  className="w-16 h-16 rounded-full object-cover"
+                  src="https://github.com/guilherme-gjv.png"
+                  alt="user-photo"
+                  title="profile photo"
+                />
+              </Menu.Button>
+              <Menu.Items className="absolute top-[100%] right-0 w-48 rounded bg-white shadow-lg ">
+                <div className="flex items-center h-10 w-full px-2 rounded-t bg-indigo-500">
+                  <p className="text-white text-center w-full">
+                    {user ? user.email : ""}
+                  </p>
+                </div>
+                <Menu.Item>
+                  <button className="h-10 px-2 w-full hover:bg-gray-100 transition-colors">
+                    Editar Perfil
+                  </button>
+                </Menu.Item>
+                <Menu.Item>
+                  <button
+                    onClick={signOut}
+                    className="h-10 px-2 w-full hover:bg-gray-100 transition-colors"
+                  >
+                    Sair
+                  </button>
+                </Menu.Item>
+              </Menu.Items>
+            </Menu>
           </div>
         </div>
 
@@ -137,110 +165,16 @@ const Home: React.FC<{
       </div>
 
       <div className="flex-1 flex flex-wrap">
-        {/* {nota: essa  div pode ter a classe 'flex' ou 'hidden''} */}
-        <div
-          className="p-2 bg-white w-full md:w-60 flex flex-col md:flex"
-          id="sideNav"
-        >
-          <nav>
-            <a
-              className="block text-gray-500 py-2.5 px-4 my-4 rounded transition duration-200 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-cyan-500 hover:text-white"
-              href="#"
-            >
-              <i className="fas fa-home mr-2"></i>Inicio
-            </a>
-            <a
-              className="block text-gray-500 py-2.5 px-4 my-4 rounded transition duration-200 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-cyan-500 hover:text-white"
-              href="#"
-            >
-              <i className="fas fa-file-alt mr-2"></i>Autorizaciones
-            </a>
-            <a
-              className="block text-gray-500 py-2.5 px-4 my-4 rounded transition duration-200 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-cyan-500 hover:text-white"
-              href="#"
-            >
-              <i className="fas fa-users mr-2"></i>Usuarios
-            </a>
-            <a
-              className="block text-gray-500 py-2.5 px-4 my-4 rounded transition duration-200 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-cyan-500 hover:text-white"
-              href="#"
-            >
-              <i className="fas fa-store mr-2"></i>Comercios
-            </a>
-            <a
-              className="block text-gray-500 py-2.5 px-4 my-4 rounded transition duration-200 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-cyan-500 hover:text-white"
-              href="#"
-            >
-              <i className="fas fa-exchange-alt mr-2"></i>Transacciones
-            </a>
-          </nav>
-
-          <button
-            onClick={signOut}
-            className="block text-gray-500 py-2.5 px-4 my-2 rounded transition duration-200 hover:bg-gradient-to-r hover:from-cyan-500 hover:to-cyan-500 hover:text-white mt-auto"
-          >
-            <i className="fas fa-sign-out-alt mr-2"></i>Logout
-          </button>
-
-          <div className="bg-gradient-to-r from-cyan-300 to-cyan-500 h-px mt-2"></div>
-
-          <p className="mb-1 px-5 py-3 text-left text-xs text-cyan-500">
-            Copyright WCSLAT@2023
-          </p>
-        </div>
-
         <div className="flex-1 p-4 w-full md:w-1/2">
-          <div className="relative max-w-md w-full">
-            <div className="absolute top-1 left-2 inline-flex items-center p-2">
-              <i className="fas fa-search text-gray-400"></i>
-            </div>
-            <input
-              className="w-full h-10 pl-10 pr-4 py-1 text-base placeholder-gray-500 border rounded-full focus:shadow-outline"
-              type="search"
-              placeholder="Buscar..."
-            />
-          </div>
-
-          <div className="mt-8 flex flex-wrap space-x-0 space-y-2 md:space-x-4 md:space-y-0">
-            <div className="flex-1 bg-white p-4 shadow rounded-lg md:w-1/2">
-              <h2 className="text-gray-500 text-lg font-semibold pb-1">
-                Usuarios
-              </h2>
-              <div className="my-1"></div>
-              <div className="bg-gradient-to-r from-cyan-300 to-cyan-500 h-px mb-6"></div>
-              <div
-                className="chart-container"
-                style={{ position: "relative", height: 150, width: "100%" }}
-              >
-                <canvas id="usersChart"></canvas>
-              </div>
-            </div>
-
-            <div className="flex-1 bg-white p-4 shadow rounded-lg md:w-1/2">
-              <h2 className="text-gray-500 text-lg font-semibold pb-1">
-                Comercios
-              </h2>
-              <div className="my-1"></div>
-              <div className="bg-gradient-to-r from-cyan-300 to-cyan-500 h-px mb-6"></div>
-              <div
-                className="chart-container"
-                style={{ position: "relative", height: 150, width: "100%" }}
-              >
-                <canvas id="commercesChart"></canvas>
-              </div>
-            </div>
-          </div>
-
           <div className="mt-8 bg-white p-4 shadow rounded-lg">
             <div className="my-1"></div>
             <div className=" flex items-center justify-between pb-6">
               <div>
                 <h2 className="text-gray-500 text-lg font-semibold">
-                  Products Oder
+                  Notas Fiscais
                 </h2>
-                <span className="text-xs">All products item</span>
               </div>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-x-2">
                 <div className="flex bg-gray-50 items-center p-2 rounded-md">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -257,19 +191,12 @@ const Home: React.FC<{
                   <input
                     className="bg-gray-50 outline-none ml-1 block "
                     type="text"
-                    name=""
-                    id=""
-                    placeholder="search..."
+                    placeholder="pesquisar..."
                   />
                 </div>
-                <div className="lg:ml-40 ml-10 space-x-8">
-                  <button className="bg-indigo-600 px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer">
-                    New Report
-                  </button>
-                  <button className="bg-indigo-600 px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer">
-                    Create
-                  </button>
-                </div>
+                <button className="bg-indigo-600 px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer">
+                  Nova
+                </button>
               </div>
             </div>
             <TableComponent
@@ -294,6 +221,21 @@ const Home: React.FC<{
                 tableData as ColumnDef<Record<string, unknown>, unknown>[]
               }
             ></TableComponent>
+          </div>
+          <div className="mt-8 flex flex-wrap space-x-0 space-y-2 md:space-x-4 md:space-y-0">
+            <div className="flex-1 bg-white p-4 shadow rounded-lg md:w-1/2">
+              <h2 className="text-gray-500 text-lg font-semibold pb-1">
+                Gastos este mês
+              </h2>
+              <div className="my-1"></div>
+              <div className="bg-gradient-to-r from-cyan-300 to-cyan-500 h-px mb-6"></div>
+              <div
+                className="chart-container"
+                style={{ position: "relative", height: 150, width: "100%" }}
+              >
+                <canvas id="usersChart"></canvas>
+              </div>
+            </div>
           </div>
         </div>
       </div>
