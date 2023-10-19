@@ -183,9 +183,9 @@ const Home: React.FC<{
                     fill="currentColor"
                   >
                     <path
-                      fill-rule="evenodd"
+                      fillRule="evenodd"
                       d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                      clip-rule="evenodd"
+                      clipRule="evenodd"
                     />
                   </svg>
                   <input
@@ -203,7 +203,11 @@ const Home: React.FC<{
               wrapperDivClasses="relative shadow rounded"
               tableClasses="min-w-full leading-normal"
               headRowClasses="text-sm leading-normal font-thin"
-              rowClasses="hover:bg-gray-50 font-thin"
+              rowClasses="hover:bg-gray-50 transition-colors cursor-pointer font-thin"
+              rowTitle="Abrir"
+              rowOnClick={(rowId: number) => {
+                console.log("funfou", rowId);
+              }}
               cellClasses="px-5 py-5 border-b border-gray-200 text-sm"
               headersClasses="px-5 py-3 border-b-2 first:rounded-l last:rounded-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
               rowsPerPageChange={setRowsPerPage}
