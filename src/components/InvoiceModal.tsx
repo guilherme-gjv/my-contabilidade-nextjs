@@ -16,19 +16,21 @@ export const editInvoiceValidationSchema = z.object({
     .string({ description: "O campo 'description' deve ser string." })
     .optional(),
 });
-export type IInvoiceFormData = z.infer<typeof editInvoiceValidationSchema>;
+export type IEditInvoiceFormData = z.infer<typeof editInvoiceValidationSchema>;
 interface InvoiceModalProps {
   invoice?: IInvoice;
   isOpen: boolean;
-  onSubmit: (data: IInvoiceFormData) => void;
+  onSubmit: (id: number, data: IEditInvoiceFormData) => void;
   onClose: () => void;
+  onDelete: (id: number) => void;
 }
 
 const InvoiceModal: React.FC<InvoiceModalProps> = ({
   invoice,
   isOpen,
-  onClose,
   onSubmit,
+  onClose,
+  onDelete,
 }) => {
   //* hooks
   const {
@@ -37,7 +39,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
     control,
     reset,
     formState: { errors },
-  } = useForm<IInvoiceFormData>({
+  } = useForm<IEditInvoiceFormData>({
     resolver: zodResolver(editInvoiceValidationSchema),
     defaultValues: {
       description: invoice ? invoice.description : "",
@@ -52,6 +54,11 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
       enterpriseCnpj: invoice?.enterpriseCnpj,
     });
   }, [invoice, reset]);
+
+  //* callback
+  const onSubmitWithId = (data: IEditInvoiceFormData) => {
+    onSubmit(invoice ? invoice.id : -1, data);
+  };
 
   //* render
   return (
@@ -71,7 +78,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
           className="fixed z-30 top-28 left-1/2 transform -translate-x-1/2 -translate-y-20 bg-white w-[90%] sm:w-3/4 h-[90vh] overflow-y-auto p-4 rounded-lg shadow-lg"
           onClose={onClose}
         >
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(onSubmitWithId)}>
             <div className="space-y-12">
               <div className="border-b border-gray-900/10 pb-8">
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -146,18 +153,24 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
                 </p>
               </div>
             </div>
-
-            <div className="mt-6 flex items-center justify-end gap-x-6">
+            <div className="mt-6 flex items-center justify-end gap-x-3">
               <button
                 type="button"
                 onClick={() => onClose()}
-                className="text-sm font-semibold leading-6 text-gray-900"
+                className="leading-6 text-gray-900 rounded-md bg-white px-3 py-2 text-sm font-semibold shadow-sm transition-colors hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 Cancelar
               </button>
               <button
+                type="button"
+                onClick={() => invoice && onDelete(invoice.id)}
+                className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+              >
+                Deletar
+              </button>
+              <button
                 type="submit"
-                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Salvar
               </button>

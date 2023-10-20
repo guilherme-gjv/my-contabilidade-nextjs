@@ -10,8 +10,10 @@ import { Menu } from "@headlessui/react";
 import TableComponent from "@/components/DataTable";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import tableData from "@/partials/tableColumns/invoices";
-import InvoiceModal from "@/components/InvoiceModal";
-import InvoiceForm, { IInvoiceFormData } from "@/components/inputs/InvoiceForm";
+import InvoiceModal, { IEditInvoiceFormData } from "@/components/InvoiceModal";
+import InvoiceForm, {
+  ICreateInvoiceFormData,
+} from "@/components/inputs/InvoiceForm";
 import { CustomToastTypes, customToast } from "@/services/customToast";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -109,22 +111,25 @@ const Home: React.FC<{
     [currentPage, push, rowsPerPage]
   );
 
-  const handleRowOnClick = (row: Row<Record<string, unknown>>) => {
-    const foundInvoice = invoices?.find((invoice) => {
-      const convertedId = parseInt(row.original.id as unknown as string);
-      if (invoice.id === convertedId) {
-        return invoice;
-      }
-    });
+  const handleRowOnClick = useCallback(
+    (row: Row<Record<string, unknown>>) => {
+      const foundInvoice = list?.find((invoice) => {
+        const convertedId = parseInt(row.original.id as unknown as string);
+        if (invoice.id === convertedId) {
+          return invoice;
+        }
+      });
 
-    if (foundInvoice) {
-      setModalData(foundInvoice);
-      setModalIsOpen(true);
-    }
-  };
+      if (foundInvoice) {
+        setModalData(foundInvoice);
+        setModalIsOpen(true);
+      }
+    },
+    [list]
+  );
 
   const onSubmitCreateForm = useCallback(
-    async ({ enterpriseCnpj, description }: IInvoiceFormData) => {
+    async ({ enterpriseCnpj, description }: ICreateInvoiceFormData) => {
       const { updateToast } = customToast(
         "Criando Nota Fiscal",
         CustomToastTypes.LOADING
@@ -144,7 +149,7 @@ const Home: React.FC<{
           isLoading: false,
           autoClose: 5000,
         });
-        setList((list) => [...list, data.data]);
+        push("/");
       } catch (error) {
         updateToast({
           render:
@@ -159,6 +164,38 @@ const Home: React.FC<{
     []
   );
 
+  const onSubmitEditForm = async (
+    id: number,
+    { enterpriseCnpj, description }: IEditInvoiceFormData
+  ) => {
+    const { updateToast } = customToast(
+      "Atualizando dados da Nota Fiscal",
+      CustomToastTypes.LOADING
+    );
+    try {
+      let requestData = { enterpriseCnpj, description };
+
+      await api.put<{ data: IInvoice }>("/invoice/" + id, requestData);
+      updateToast({
+        render: "Nota atualizada!",
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
+      push("/");
+    } catch (error) {
+      updateToast({
+        render:
+          "Houve um erro na atualização da Nota Fiscal! " +
+          getErrorMessage(error),
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
+    }
+    setModalIsOpen(false);
+  };
+
   useEffect(() => {
     handleOnRequestSearch();
   }, []);
@@ -170,7 +207,8 @@ const Home: React.FC<{
         invoice={modalData}
         isOpen={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
-        onSubmit={(data) => console.log(data)}
+        onDelete={(data) => console.log(data)}
+        onSubmit={onSubmitEditForm}
       />
 
       <InvoiceForm

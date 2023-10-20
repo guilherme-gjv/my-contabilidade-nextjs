@@ -16,11 +16,11 @@ export const invoiceValidationSchema = z.object({
     .string({ description: "O campo 'description' deve ser string." })
     .optional(),
 });
-export type IInvoiceFormData = z.infer<typeof invoiceValidationSchema>;
+export type ICreateInvoiceFormData = z.infer<typeof invoiceValidationSchema>;
 
 interface InvoiceFormProps {
   isOpen: boolean;
-  onSubmit: (data: IInvoiceFormData) => void;
+  onSubmit: (data: ICreateInvoiceFormData) => void;
   onClose: () => void;
 }
 
@@ -35,7 +35,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm<IInvoiceFormData>({
+  } = useForm<ICreateInvoiceFormData>({
     resolver: zodResolver(invoiceValidationSchema),
   });
 
