@@ -196,6 +196,32 @@ const Home: React.FC<{
     setModalIsOpen(false);
   };
 
+  const handleOnDelete = async (id: number) => {
+    const { updateToast } = customToast(
+      "Deletando Nota Fiscal",
+      CustomToastTypes.LOADING
+    );
+    try {
+      await api.delete<{ data: IInvoice }>("/invoice/" + id);
+      updateToast({
+        render: "Nota deletada!",
+        type: "success",
+        isLoading: false,
+        autoClose: 5000,
+      });
+      push("/");
+    } catch (error) {
+      updateToast({
+        render:
+          "Houve um erro ao deletar Nota Fiscal! " + getErrorMessage(error),
+        type: "error",
+        isLoading: false,
+        autoClose: 5000,
+      });
+    }
+    setModalIsOpen(false);
+  };
+
   useEffect(() => {
     handleOnRequestSearch();
   }, []);
@@ -207,7 +233,7 @@ const Home: React.FC<{
         invoice={modalData}
         isOpen={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
-        onDelete={(data) => console.log(data)}
+        onDelete={handleOnDelete}
         onSubmit={onSubmitEditForm}
       />
 
