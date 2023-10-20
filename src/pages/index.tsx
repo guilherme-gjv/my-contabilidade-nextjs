@@ -11,6 +11,8 @@ import TableComponent from "@/components/DataTable";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import tableData from "@/partials/tableColumns/invoices";
 import InvoiceModal from "@/components/InvoiceModal";
+import InvoiceForm, { IInvoiceFormData } from "@/components/inputs/InvoiceForm";
+import { CustomToastTypes, customToast } from "@/services/customToast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -80,7 +82,7 @@ const Home: React.FC<{
   aLength: number;
   //filterData?: any;
   //filterStatus: boolean;
-}> = ({ invoices, aLength, page, rows }) => {
+}> = ({ invoices = [], aLength, page, rows }) => {
   const pagesAmount = useMemo(() => {
     return !(Math.ceil(aLength / rows) === 0) ? Math.ceil(aLength / rows) : 1;
   }, [aLength, rows]);
@@ -90,13 +92,14 @@ const Home: React.FC<{
     page > pagesAmount ? pagesAmount : page
   );
   const [list, setList] = useState(invoices);
+  const [invoiceFormIsOpen, setInvoiceFormIsOpen] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [modalData, setModalData] = useState<IInvoice | null>(null);
+  const [modalData, setModalData] = useState<IInvoice>();
 
   const { push } = useRouter();
 
   useEffect(() => {
-    setList(invoices);
+    setList(invoices as IInvoice[]);
   }, [invoices]);
 
   const { signOut, user } = useContext(AuthContext);
@@ -120,14 +123,59 @@ const Home: React.FC<{
     }
   };
 
+  const onSubmitCreateForm = useCallback(
+    async ({ enterpriseCnpj, description }: IInvoiceFormData) => {
+      const { updateToast } = customToast(
+        "Criando Nota Fiscal",
+        CustomToastTypes.LOADING
+      );
+      try {
+        let requestData = { enterpriseCnpj, description };
+        if (!enterpriseCnpj) {
+          delete requestData["enterpriseCnpj"];
+        }
+        const { data } = await api.post<{ data: IInvoice }>(
+          "/invoice",
+          requestData
+        );
+        updateToast({
+          render: "Nota registrada!",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
+        setList((list) => [...list, data.data]);
+      } catch (error) {
+        updateToast({
+          render: "Houve um erro no login! " + getErrorMessage(error),
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      }
+      setInvoiceFormIsOpen(false);
+    },
+    []
+  );
+
   useEffect(() => {
     handleOnRequestSearch();
   }, []);
 
   //* render
   return (
-    <div className="relative flex flex-col w-full h-screen bg-gray-100">
-      {modalIsOpen && modalData && <InvoiceModal invoice={modalData} />}
+    <div className="flex flex-col w-full h-screen bg-gray-100">
+      <InvoiceModal
+        invoice={modalData}
+        isOpen={modalIsOpen}
+        onClose={() => setModalIsOpen(false)}
+      />
+      <InvoiceForm
+        isOpen={invoiceFormIsOpen}
+        onSubmit={onSubmitCreateForm}
+        onClose={() => setInvoiceFormIsOpen(false)}
+      />
+
       <div className="bg-white text-black shadow w-full p-2 flex items-center justify-between">
         <div className="flex items-center justify-between  w-full">
           <div className="flex items-center">
@@ -212,8 +260,11 @@ const Home: React.FC<{
                     placeholder="pesquisar..."
                   />
                 </div>
-                <button className="bg-indigo-600 px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer">
-                  Nova
+                <button
+                  onClick={() => setInvoiceFormIsOpen(true)}
+                  className="bg-indigo-600 px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer"
+                >
+                  Nova Nota Fiscal
                 </button>
               </div>
             </div>
