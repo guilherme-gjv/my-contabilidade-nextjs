@@ -147,7 +147,8 @@ const Home: React.FC<{
         setList((list) => [...list, data.data]);
       } catch (error) {
         updateToast({
-          render: "Houve um erro no login! " + getErrorMessage(error),
+          render:
+            "Houve um erro no registro da nota! " + getErrorMessage(error),
           type: "error",
           isLoading: false,
           autoClose: 5000,
