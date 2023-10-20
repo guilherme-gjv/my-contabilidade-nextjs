@@ -4,16 +4,28 @@ import { mask, unMask } from "remask";
 interface CpfCnpjInputProps {
   value: string;
   onChange: (value: string) => void;
+  disable?: {
+    cpf?: boolean;
+    cnpj?: boolean;
+  };
 }
 
-const CpfCnpjInput: React.FC<CpfCnpjInputProps> = ({ value, onChange }) => {
+const CpfCnpjInput: React.FC<CpfCnpjInputProps> = ({
+  value,
+  onChange,
+  disable,
+}) => {
   const [inputText, setInputText] = useState("");
 
   const handleOnChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
-    const maskedValue = mask(unMask(evt.target.value), [
-      "999.999.999-99",
-      "99.999.999/9999-99",
-    ]);
+    const maskArray: string[] = [];
+    if (!disable || (disable && !disable.cpf)) {
+      maskArray.push("999.999.999-99");
+    }
+    if (!disable || (disable && !disable.cnpj)) {
+      maskArray.push("99.999.999/9999-99");
+    }
+    const maskedValue = mask(unMask(evt.target.value), maskArray);
     setInputText(maskedValue);
   };
 
