@@ -305,7 +305,7 @@ const Home: React.FC<{
               <h2 className="text-gray-500 text-left w-full text-lg font-semibold">
                 Notas Fiscais
               </h2>
-              <div className="flex flex-col-reverse sm:flex-row justify-between gap-y-5 sm:gap-y-0 sm:gap-x-2">
+              <div className="flex flex-col-reverse w-full sm:w-auto sm:flex-row justify-between gap-y-5 sm:gap-y-0 sm:gap-x-2">
                 <div className="flex bg-gray-50 items-center p-2 rounded-md">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"

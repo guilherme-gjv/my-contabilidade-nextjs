@@ -100,7 +100,7 @@ const Pagination: React.FC<PaginationProps> = ({
     pagesAmount &&
     rowsPerPage &&
     setRowsPerPage ? (
-    <div className="relative w-full min-w-full rounded-b-lg flex flex-col justify-between space-y-4 px-4 py-4 sm:items-center sm:space-y-0 sm:px-5 text-navy-700 dark:text-navy-100 bg-white dark:bg-navy-700 transition-colors ">
+    <div className="relative overflow-x-auto w-full min-w-full rounded-b-lg flex flex-col justify-between space-y-4 px-4 py-4 sm:items-center sm:space-y-0 sm:px-5 text-navy-700 dark:text-navy-100 bg-white dark:bg-navy-700 transition-colors ">
       <div className="px-5 py-5 bg-white flex flex-col xs:flex-row items-center xs:justify-between">
         <p className="text-xs xs:text-sm text-gray-900 mb-2">
           {!totalRows || totalRows === 0
