@@ -301,13 +301,11 @@ const Home: React.FC<{
         <div className="flex-1 p-4 w-full md:w-1/2">
           <div className="mt-8 bg-white p-4 shadow rounded-lg">
             <div className="my-1"></div>
-            <div className=" flex items-center justify-between pb-6">
-              <div>
-                <h2 className="text-gray-500 text-lg font-semibold">
-                  Notas Fiscais
-                </h2>
-              </div>
-              <div className="flex items-center justify-between gap-x-2">
+            <div className="flex flex-col gap-y-5 sm:gap-y-0 sm:flex-row items-center justify-between pb-6">
+              <h2 className="text-gray-500 text-left w-full text-lg font-semibold">
+                Notas Fiscais
+              </h2>
+              <div className="flex flex-col-reverse sm:flex-row justify-between gap-y-5 sm:gap-y-0 sm:gap-x-2">
                 <div className="flex bg-gray-50 items-center p-2 rounded-md">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
