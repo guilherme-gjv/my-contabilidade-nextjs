@@ -8,8 +8,9 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { useRouter } from "next/router";
 import { Menu } from "@headlessui/react";
 import TableComponent from "@/components/DataTable";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import tableData from "@/partials/tableColumns/invoices";
+import InvoiceModal from "@/components/InvoiceModal";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,14 +31,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   try {
     api.defaults.headers.Authorization = `Bearer ${token}`;
-    const { data } = await api.get(`/invoice`, {
+    const { data } = await api.get<{ data: IInvoice[] }>(`/invoice`, {
       params: {
         rows,
         page,
       },
     });
 
-    const invoicesWithValue = data.data.map((invoice: any) => {
+    const invoicesWithValue = data.data.map((invoice: IInvoice) => {
       let value = 0;
 
       invoice.items.forEach((item: any) => {
@@ -75,7 +76,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 const Home: React.FC<{
   page: number;
   rows: number;
-  invoices?: any[];
+  invoices?: IInvoice[];
   aLength: number;
   //filterData?: any;
   //filterStatus: boolean;
@@ -89,6 +90,8 @@ const Home: React.FC<{
     page > pagesAmount ? pagesAmount : page
   );
   const [list, setList] = useState(invoices);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [modalData, setModalData] = useState<IInvoice | null>(null);
 
   const { push } = useRouter();
 
@@ -103,13 +106,28 @@ const Home: React.FC<{
     [currentPage, push, rowsPerPage]
   );
 
+  const handleRowOnClick = (row: Row<Record<string, unknown>>) => {
+    const foundInvoice = invoices?.find((invoice) => {
+      const convertedId = parseInt(row.original.id as unknown as string);
+      if (invoice.id === convertedId) {
+        return invoice;
+      }
+    });
+
+    if (foundInvoice) {
+      setModalData(foundInvoice);
+      setModalIsOpen(true);
+    }
+  };
+
   useEffect(() => {
     handleOnRequestSearch();
   }, []);
 
   //* render
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div className="relative flex flex-col w-full h-screen bg-gray-100">
+      {modalIsOpen && modalData && <InvoiceModal invoice={modalData} />}
       <div className="bg-white text-black shadow w-full p-2 flex items-center justify-between">
         <div className="flex items-center justify-between  w-full">
           <div className="flex items-center">
@@ -205,9 +223,7 @@ const Home: React.FC<{
               headRowClasses="text-sm leading-normal font-thin"
               rowClasses="hover:bg-gray-50 transition-colors cursor-pointer font-thin"
               rowTitle="Abrir"
-              rowOnClick={(rowId: number) => {
-                console.log("funfou", rowId);
-              }}
+              rowOnClick={handleRowOnClick}
               cellClasses="px-5 py-5 border-b border-gray-200 text-sm"
               headersClasses="px-5 py-3 border-b-2 first:rounded-l last:rounded-r border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
               rowsPerPageChange={setRowsPerPage}
@@ -217,7 +233,7 @@ const Home: React.FC<{
               currentPage={currentPage}
               totalRows={aLength}
               onPaginationChange={setCurrentPage}
-              data={list ? (list as Record<string, unknown>[]) : []}
+              data={list ? (list as unknown as Record<string, unknown>[]) : []}
               isListEmpty={list?.length === 0 || !list}
               columns={
                 tableData as ColumnDef<Record<string, unknown>, unknown>[]

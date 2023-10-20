@@ -6,6 +6,7 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  Row,
   RowModel,
   SortingState,
   Table,
@@ -18,6 +19,8 @@ import { useState } from "react";
 
 interface TableProps {
   headRowClasses?: string;
+  rowOnClick?: (row: Row<Record<string, unknown>>) => void;
+  rowTitle?: string;
   rowClasses?: string;
   mobileRowClasses?: string;
   cellClasses?: string;
@@ -51,6 +54,8 @@ const TableComponent: React.FC<TableProps> = ({
   headersClasses,
   data,
   columns,
+  rowTitle,
+  rowOnClick,
   isPaginated,
   onPaginationChange,
   wrapperDivClasses,
@@ -127,7 +132,12 @@ const TableComponent: React.FC<TableProps> = ({
           <tbody className="overflow-x-hidden">
             {table.getRowModel().rows.map((row) => {
               return (
-                <tr key={row.id} className={rowClasses}>
+                <tr
+                  key={row.id}
+                  className={rowClasses}
+                  title={rowTitle}
+                  onClick={() => rowOnClick && rowOnClick(row)}
+                >
                   {row.getVisibleCells().map((cell) => {
                     return (
                       <td key={cell.id} className={cellClasses}>
