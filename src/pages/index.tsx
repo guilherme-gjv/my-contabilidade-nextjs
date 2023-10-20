@@ -169,7 +169,9 @@ const Home: React.FC<{
         invoice={modalData}
         isOpen={modalIsOpen}
         onClose={() => setModalIsOpen(false)}
+        onSubmit={(data) => console.log(data)}
       />
+
       <InvoiceForm
         isOpen={invoiceFormIsOpen}
         onSubmit={onSubmitCreateForm}
