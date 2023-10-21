@@ -35,7 +35,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   try {
     api.defaults.headers.Authorization = `Bearer ${token}`;
-    const { data } = await api.get<{ data: IInvoice[] }>(`/invoice`, {
+    const { data } = await api.get<{
+      data: IInvoice[];
+      count: number;
+      rows: number;
+      page: number;
+    }>(`/invoice`, {
       params: {
         rows,
         page,
@@ -59,9 +64,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     return {
       props: {
         invoices: invoicesWithValue,
-        page,
-        rows,
-        aLength: 98, // data.data.count,
+        page: data.page,
+        rows: data.rows,
+        aLength: data.count,
       },
     };
   } catch (e) {
@@ -224,7 +229,7 @@ const Home: React.FC<{
 
   useEffect(() => {
     handleOnRequestSearch();
-  }, []);
+  }, [rowsPerPage, currentPage]);
 
   //* render
   return (
