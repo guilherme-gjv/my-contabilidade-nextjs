@@ -123,7 +123,7 @@ const Pagination: React.FC<PaginationProps> = ({
           ))}
         </select>
       </div>
-      <ol className="pagination flex space-x-1.5">
+      <ol className="pagination flex justify-start sm:justify-center space-x-1.5">
         <li>
           <button
             type="button"
