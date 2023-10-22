@@ -4,6 +4,8 @@ import { z } from "zod";
 import CpfCnpjInput from "./CpfCnpjInput";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import ItemsListInput from "./ItemsList/ItemsListInput";
+import { IInvoiceItemForm } from "./ItemsList/CreateItem";
 
 export const invoiceValidationSchema = z.object({
   enterpriseCnpj: z
@@ -16,7 +18,10 @@ export const invoiceValidationSchema = z.object({
     .string({ description: "O campo 'description' deve ser string." })
     .optional(),
 });
-export type ICreateInvoiceFormData = z.infer<typeof invoiceValidationSchema>;
+export interface ICreateInvoiceFormData
+  extends z.infer<typeof invoiceValidationSchema> {
+  items: IInvoiceItemForm[];
+}
 
 interface InvoiceFormProps {
   isOpen: boolean;
@@ -124,12 +129,19 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
               </div>
               <div className="border-b border-gray-900/10 pb-12">
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Notifications
+                  Itens da Nota
                 </h2>
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                  We will always let you know about important changes, but you
-                  pick what else you want to hear about.
-                </p>
+                <div className="mt-1 text-sm leading-6 text-gray-600">
+                  <Controller
+                    name="items"
+                    control={control}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <ItemsListInput onChange={onChange} value={value} />
+                      );
+                    }}
+                  />
+                </div>
               </div>
             </div>
 
