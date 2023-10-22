@@ -39,7 +39,7 @@ const Pagination: React.FC<PaginationProps> = ({
     for (let index = 0; index < max; index++) {
       defaultPageNumbers.push(index + 1);
     }
-    setPageNumbers(defaultPageNumbers);
+    setPageNumbers(defaultPageNumbers.slice());
     onPaginationChange &&
       onPaginationChange(
         currentPage && currentPage > pgsAmount ? pgsAmount : currentPage || 1
@@ -58,29 +58,35 @@ const Pagination: React.FC<PaginationProps> = ({
 
   const navigatePreviousPage = useCallback(() => {
     setPageNumbers(
-      pageNumbers.map((number) => {
-        return number - 1;
-      })
+      pageNumbers
+        .map((number) => {
+          return number - 1;
+        })
+        .slice()
     );
   }, [pageNumbers]);
 
   const navigateNextPage = useCallback(() => {
     setPageNumbers(
-      pageNumbers.map((number) => {
-        return number + 1;
-      })
+      pageNumbers
+        .map((number) => {
+          return number + 1;
+        })
+        .slice()
     );
   }, [pageNumbers]);
 
   const navigateLastPage = useCallback(() => {
     if (!(pgsAmount <= pageNumbers[5])) {
       if (pgsAmount <= 5) {
-        setPageNumbers(defaultPageNumbers);
+        setPageNumbers(defaultPageNumbers.slice());
       } else {
         setPageNumbers(
-          pageNumbers.map((_number, index) => {
-            return pgsAmount - (4 - index);
-          })
+          pageNumbers
+            .map((_number, index) => {
+              return pgsAmount - (4 - index);
+            })
+            .slice()
         );
       }
     }
