@@ -13,19 +13,15 @@ export const invoiceItemValidationSchema = z.object({
     .min(1, "O campo 'nome' é obrigatório."),
 });
 
-export interface IInvoiceItem {
+export interface IInvoiceItemWithInfoId extends IInvoiceItem {
   price: number;
   name: string;
-  info?: {
-    id?: string;
-    changed?: boolean;
-    state?: "new" | "exists";
-  };
+  info_id?: string;
 }
 
 interface CreateItemProps {
-  defaultValue?: IInvoiceItem;
-  onClickSave?: (data: IInvoiceItem) => void;
+  defaultValue?: IInvoiceItemWithInfoId;
+  onClickSave?: (data: IInvoiceItemWithInfoId) => void;
   onDelete?: (id: string) => void;
   newItemLabel?: string;
   editable?: boolean;
@@ -152,13 +148,8 @@ const CreateItem: React.FC<CreateItemProps> = ({
         {editable && (
           <button
             onClick={() => {
-              if (
-                defaultValue &&
-                defaultValue.info &&
-                defaultValue.info.id &&
-                onDelete
-              ) {
-                onDelete(defaultValue.info.id);
+              if (defaultValue && defaultValue.info_id && onDelete) {
+                onDelete(defaultValue.info_id);
               }
             }}
             type="button"

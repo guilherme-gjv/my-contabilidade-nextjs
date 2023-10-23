@@ -1,14 +1,14 @@
 import { useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
-import CreateItem, { IInvoiceItem } from "./CreateItem";
+import CreateItem, { IInvoiceItemWithInfoId } from "./CreateItem";
 
 interface ListingItemsInputProps {
-  value?: IInvoiceItem[];
-  onClickSave?: (data: IInvoiceItem) => void;
+  value?: IInvoiceItemWithInfoId[];
+  onClickSave?: (data: IInvoiceItemWithInfoId) => void;
   /** Callback called by clicking remove button. */
   onRemoveClick?: (id: string) => void;
   /** Callback called by clicking the add button passing the input content on the param.  */
-  onChange?: (value: IInvoiceItem[]) => void;
+  onChange?: (value: IInvoiceItemWithInfoId[]) => void;
 }
 
 const ItemsListInput: React.FC<ListingItemsInputProps> = ({
@@ -54,9 +54,7 @@ const ItemsListInput: React.FC<ListingItemsInputProps> = ({
           <CreateItem
             defaultValue={{
               ...item.item,
-              info: {
-                id: item.id,
-              },
+              info_id: item.id,
             }}
             newItemLabel="Salvar"
             onClickSave={(data) => {

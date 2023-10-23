@@ -15,7 +15,7 @@ import InvoiceForm, {
   ICreateInvoiceFormData,
 } from "@/components/inputs/InvoiceForm";
 import { CustomToastTypes, customToast } from "@/services/customToast";
-import { IInvoiceItem } from "@/components/inputs/ItemsList/CreateItem";
+import { IInvoiceItemWithInfoId } from "@/components/inputs/ItemsList/CreateItem";
 
 const inter = Inter({ subsets: ["latin"] });
 
