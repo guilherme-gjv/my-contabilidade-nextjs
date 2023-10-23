@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { ZodError, z } from "zod";
 
 export const invoiceItemValidationSchema = z.object({
-  price: z.number({ required_error: "O preço é obrigatório." }),
+  price: z
+    .number({ required_error: "O preço é obrigatório." })
+    .min(0, "O preço deve ser um valor positivo."),
   name: z
     .string({
       required_error: "O campo 'name' é obrigatório.",
@@ -37,15 +39,16 @@ const CreateItem: React.FC<CreateItemProps> = ({
   onDelete,
 }) => {
   //* states
-  const [values, setValues] = useState<IInvoiceItem>({
-    name: defaultValue?.name || "",
-    price: defaultValue?.price || 0,
-  });
   const [errors, setErrors] = useState({
     price: { message: "" },
     name: { message: "" },
   });
 
+  //* refs
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const priceInputRef = useRef<HTMLInputElement>(null);
+
+  //* handlers
   const checkErrors = async ({ name, price }: IInvoiceItem) => {
     try {
       await invoiceItemValidationSchema.parseAsync({
@@ -79,12 +82,34 @@ const CreateItem: React.FC<CreateItemProps> = ({
   };
 
   //* handlers
-  const handleClickNewItem = async () => {
-    if ((await checkErrors(values)) && onClickSave) {
-      onClickSave(values);
+  const handleClickNewItem = useCallback(async () => {
+    let price = 0;
+    let name = "";
+    if (priceInputRef && priceInputRef.current && priceInputRef.current.value) {
+      price = parseFloat(priceInputRef.current.value);
     }
-    setValues({ price: 0, name: "" });
-  };
+    if (nameInputRef && nameInputRef.current && nameInputRef.current.value) {
+      name = nameInputRef.current.value;
+    }
+    const values = {
+      price,
+      name,
+    };
+    if ((await checkErrors(values)) && onClickSave) {
+      setErrors({ name: { message: "" }, price: { message: "" } });
+      onClickSave(values);
+      if (
+        priceInputRef &&
+        priceInputRef.current &&
+        priceInputRef.current.value
+      ) {
+        priceInputRef.current.value = "";
+      }
+      if (nameInputRef && nameInputRef.current && nameInputRef.current.value) {
+        nameInputRef.current.value = "";
+      }
+    }
+  }, [onClickSave]);
 
   //* render
   return (
@@ -100,15 +125,7 @@ const CreateItem: React.FC<CreateItemProps> = ({
               type="text"
               name="name"
               defaultValue={defaultValue?.name}
-              value={values.name}
-              onChange={(evt) => {
-                setValues((data) => {
-                  return {
-                    ...data,
-                    name: evt.target.value,
-                  };
-                });
-              }}
+              ref={nameInputRef}
               id="description"
               className="block z-50 w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
@@ -123,18 +140,7 @@ const CreateItem: React.FC<CreateItemProps> = ({
               type="number"
               name="price"
               defaultValue={defaultValue?.price}
-              value={values.price}
-              onChange={(evt) => {
-                setValues((data) => {
-                  const convertedPrice = parseFloat(evt.target.value);
-                  return {
-                    ...data,
-                    price: isNaN(convertedPrice)
-                      ? 0
-                      : parseFloat(convertedPrice.toFixed(2)),
-                  };
-                });
-              }}
+              ref={priceInputRef}
               id="description"
               className="block z-50 w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
