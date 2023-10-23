@@ -1,3 +1,4 @@
+import { formatDate } from "@/services/dateHandlers";
 import { ColumnDef } from "@tanstack/react-table";
 import { mask } from "remask";
 
@@ -92,7 +93,8 @@ const tableData: ColumnDef<TableColumn>[] = [
         ),
         cell: (info) => (
           <div className="flex font-thin flex-row items-center justify-start gap-2">
-            {info?.row?.original.createdAt?.toString()}
+            {info?.row?.original.createdAt &&
+              formatDate(info?.row?.original.createdAt.toString())}
           </div>
         ),
         accessorFn: (row) => row.createdAt,
@@ -105,7 +107,8 @@ const tableData: ColumnDef<TableColumn>[] = [
         ),
         cell: (info) => (
           <div className="flex font-thin flex-row items-center justify-start gap-2">
-            {info?.row?.original.updatedAt?.toString()}
+            {info?.row?.original.updatedAt &&
+              formatDate(info?.row?.original.updatedAt.toString())}
           </div>
         ),
         accessorFn: (row) => row.updatedAt,
