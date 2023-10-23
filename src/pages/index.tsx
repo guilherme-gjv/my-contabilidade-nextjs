@@ -15,6 +15,7 @@ import InvoiceForm, {
   ICreateInvoiceFormData,
 } from "@/components/inputs/InvoiceForm";
 import { CustomToastTypes, customToast } from "@/services/customToast";
+import { IInvoiceItem } from "@/components/inputs/ItemsList/CreateItem";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -134,7 +135,7 @@ const Home: React.FC<{
   );
 
   const onSubmitCreateForm = useCallback(
-    async ({ enterpriseCnpj, description }: ICreateInvoiceFormData) => {
+    async ({ description, enterpriseCnpj, items }: ICreateInvoiceFormData) => {
       const { updateToast } = customToast(
         "Criando Nota Fiscal",
         CustomToastTypes.LOADING
@@ -147,6 +148,11 @@ const Home: React.FC<{
         const { data } = await api.post<{ data: IInvoice }>(
           "/invoice",
           requestData
+        );
+
+        await api.post<{ data: IInvoiceItem }>(
+          `/invoice/${data.data.id}/items`,
+          items
         );
         updateToast({
           render: "Nota registrada!",

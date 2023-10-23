@@ -5,7 +5,6 @@ import CpfCnpjInput from "./CpfCnpjInput";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ItemsListInput from "./ItemsList/ItemsListInput";
-import { IInvoiceItemForm } from "./ItemsList/CreateItem";
 
 export const invoiceValidationSchema = z.object({
   enterpriseCnpj: z
@@ -17,11 +16,19 @@ export const invoiceValidationSchema = z.object({
   description: z
     .string({ description: "O campo 'description' deve ser string." })
     .optional(),
+  items: z
+    .object({
+      price: z.number({ required_error: "O preço é obrigatório." }),
+      name: z
+        .string({
+          required_error: "O campo 'name' é obrigatório.",
+          description: "O campo 'name' deve ser string.",
+        })
+        .min(1, "O campo nome é obrigatório."),
+    })
+    .array(),
 });
-export interface ICreateInvoiceFormData
-  extends z.infer<typeof invoiceValidationSchema> {
-  items: IInvoiceItemForm[];
-}
+export type ICreateInvoiceFormData = z.infer<typeof invoiceValidationSchema>;
 
 interface InvoiceFormProps {
   isOpen: boolean;
