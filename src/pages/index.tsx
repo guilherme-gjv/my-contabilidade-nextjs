@@ -269,7 +269,9 @@ const Home: React.FC<{
               <Menu.Button>
                 <img
                   className="w-16 h-16 rounded-full object-cover"
-                  src="https://github.com/guilherme-gjv.png"
+                  src={`https://robohash.org/${
+                    user ? user?.email : "user"
+                  }?set=set4`}
                   alt="user-photo"
                   title="profile photo"
                 />
