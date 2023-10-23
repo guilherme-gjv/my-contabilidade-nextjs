@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ZodError, z } from "zod";
 
 export const invoiceItemValidationSchema = z.object({
@@ -83,6 +83,7 @@ const CreateItem: React.FC<CreateItemProps> = ({
     if ((await checkErrors(values)) && onClickSave) {
       onClickSave(values);
     }
+    setValues({ price: 0, name: "" });
   };
 
   //* render
@@ -99,6 +100,7 @@ const CreateItem: React.FC<CreateItemProps> = ({
               type="text"
               name="name"
               defaultValue={defaultValue?.name}
+              value={values.name}
               onChange={(evt) => {
                 setValues((data) => {
                   return {
@@ -120,7 +122,8 @@ const CreateItem: React.FC<CreateItemProps> = ({
             <input
               type="number"
               name="price"
-              defaultValue={values.price}
+              defaultValue={defaultValue?.price}
+              value={values.price}
               onChange={(evt) => {
                 setValues((data) => {
                   const convertedPrice = parseFloat(evt.target.value);

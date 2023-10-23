@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useCallback } from "react";
 import { z } from "zod";
 import CpfCnpjInput from "./CpfCnpjInput";
 import { Controller, useForm } from "react-hook-form";
@@ -46,10 +46,20 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm<ICreateInvoiceFormData>({
     resolver: zodResolver(invoiceValidationSchema),
   });
+
+  //* callbacks
+  const handleOnSubmit = useCallback(
+    (data: ICreateInvoiceFormData) => {
+      onSubmit(data);
+      reset();
+    },
+    [onSubmit, reset]
+  );
 
   //* render
   return (
@@ -69,7 +79,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
           className="fixed z-30 top-28 left-1/2 transform -translate-x-1/2 -translate-y-20 bg-white w-[90%] sm:w-3/4 h-[90vh] overflow-y-auto p-4 rounded-lg shadow-lg"
           onClose={onClose}
         >
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(handleOnSubmit)}>
             <div className="space-y-12">
               <div className="border-b border-gray-900/10 pb-8">
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -155,7 +165,14 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
             <div className="mt-6 flex items-center justify-end gap-x-6">
               <button
                 type="button"
-                onClick={() => onClose()}
+                onClick={() => {
+                  onClose();
+                  reset({
+                    items: [],
+                    description: "",
+                    enterpriseCnpj: undefined,
+                  });
+                }}
                 className="text-sm font-semibold leading-6 text-gray-900"
               >
                 Cancelar
