@@ -106,7 +106,7 @@ const EditItem: React.FC<EditItemProps> = ({
     }
   }, [onClickSave]);
 
-  const handleOnChangeItem = () => {
+  const handleOnChangeItem = async () => {
     let price = 0;
     let name = "";
     if (priceInputRef && priceInputRef.current && priceInputRef.current.value) {
@@ -120,7 +120,9 @@ const EditItem: React.FC<EditItemProps> = ({
       price,
       name,
     };
-    onChangeItem && onChangeItem(values);
+    if ((await checkErrors(values)) && onChangeItem) {
+      onChangeItem(values);
+    }
   };
 
   //* render
@@ -186,9 +188,6 @@ const EditItem: React.FC<EditItemProps> = ({
             </button>
             <button
               onClick={() => {
-                console.log("clicou");
-                console.log(defaultValue);
-
                 if (defaultValue && defaultValue.id && onDelete) {
                   onDelete(defaultValue.id);
                 } else if (
@@ -196,8 +195,6 @@ const EditItem: React.FC<EditItemProps> = ({
                   defaultValue.info_id &&
                   onDeleteNewItem
                 ) {
-                  console.log("chegou");
-
                   onDeleteNewItem(defaultValue.info_id);
                 }
               }}
