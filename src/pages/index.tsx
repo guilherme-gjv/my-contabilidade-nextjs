@@ -194,24 +194,20 @@ const Home: React.FC<{
         "/invoice/" + id,
         requestData
       );
-      console.log("newItems", newItems);
       if (newItems && newItems.length > 0) {
         const requestNewItems = newItems.map((item) => ({
           price: item.price,
           name: item.name,
         }));
-        console.log("requestNewItems", requestNewItems);
-        const response = await api.post<{ count: number }>(
+        await api.post<{ count: number }>(
           `/invoice/${data.data.id}/items`,
           requestNewItems
         );
-        console.log("response", response);
       }
-      console.log("editedItems", editedItems);
 
       if (editedItems && editedItems.length > 0) {
         const requestEditedItems = editedItems.map((item) => ({
-          id: item.price,
+          id: item.id,
           price: item.price,
           name: item.name,
         }));
@@ -220,8 +216,6 @@ const Home: React.FC<{
           requestEditedItems
         );
       }
-
-      console.log("deletedItems", deletedItems);
 
       if (deletedItems && deletedItems.length > 0) {
         for (const item of deletedItems) {
@@ -279,7 +273,7 @@ const Home: React.FC<{
 
   useEffect(() => {
     handleOnRequestSearch();
-  }, [rowsPerPage, currentPage]);
+  }, [rowsPerPage, currentPage, handleOnRequestSearch]);
 
   //* render
   return (
