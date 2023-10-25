@@ -273,7 +273,7 @@ const Home: React.FC<{
 
   useEffect(() => {
     handleOnRequestSearch();
-  }, [rowsPerPage, currentPage, handleOnRequestSearch]);
+  }, [rowsPerPage, currentPage]);
 
   //* render
   return (
