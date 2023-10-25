@@ -33,13 +33,6 @@ const EditItemsListInput: React.FC<ListingItemsInputProps> = ({
 
   //* lifecycle
   useEffect(() => {
-    console.log("effect list");
-    console.log("newItems", newItems);
-
-    console.log("editedItems", editedItems);
-
-    console.log("deletedItems", deletedItems);
-
     onChangeItems && onChangeItems(newItems, editedItems, deletedItems);
   }, [newItems, editedItems, deletedItems, onChangeItems]);
 
@@ -162,6 +155,32 @@ const EditItemsListInput: React.FC<ListingItemsInputProps> = ({
     [displayedItems, newItems]
   );
 
+  const handleChangeNewItem = useCallback((data: IInvoiceItemWithInfoId) => {
+    setDisplayedItems((items) => {
+      const foundIndex = items.findIndex(
+        (item) => item.info_id === data.info_id
+      );
+      if (foundIndex === -1) {
+        return items;
+      } else {
+        setNewItems((newItems) => {
+          const newItemIndex = newItems.findIndex(
+            (newItem) => newItem.info_id === data.info_id
+          );
+          if (newItemIndex === -1) {
+            return newItems;
+          } else {
+            newItems[newItemIndex] = data;
+            return newItems.slice();
+          }
+        });
+
+        items[foundIndex] = data;
+        return items.slice();
+      }
+    });
+  }, []);
+
   //* render
   return (
     <div className="flex flex-col gap-y-3 border border-gray-300 text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-full ">
@@ -193,6 +212,7 @@ const EditItemsListInput: React.FC<ListingItemsInputProps> = ({
             }}
             newItemLabel="Salvar"
             onChangeItem={handleChangeItem}
+            onChangeNewItem={handleChangeNewItem}
             onDelete={onDelete}
             onDeleteNewItem={handleDeleteNewItem}
             editable={true}

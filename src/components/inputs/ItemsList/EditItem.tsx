@@ -18,6 +18,7 @@ interface EditItemProps {
   defaultValue?: IInvoiceItemWithInfoId;
   onClickSave?: (data: IInvoiceItemWithInfoId) => void;
   onChangeItem?: (data: IInvoiceItemWithInfoId) => void;
+  onChangeNewItem?: (data: IInvoiceItemWithInfoId) => void;
   onDelete?: (id: number) => void;
   onDeleteNewItem?: (id: string) => void;
   newItemLabel?: string;
@@ -29,6 +30,7 @@ const EditItem: React.FC<EditItemProps> = ({
   onClickSave,
   newItemLabel,
   onChangeItem,
+  onChangeNewItem,
   editable,
   onDelete,
   onDeleteNewItem,
@@ -121,7 +123,11 @@ const EditItem: React.FC<EditItemProps> = ({
       name,
     };
     if ((await checkErrors(values)) && onChangeItem) {
-      onChangeItem(values);
+      if (defaultValue?.id) {
+        onChangeItem(values);
+      } else if (defaultValue?.info_id && onChangeNewItem) {
+        onChangeNewItem({ ...values, info_id: defaultValue.info_id });
+      }
     }
   };
 
@@ -169,7 +175,6 @@ const EditItem: React.FC<EditItemProps> = ({
               onClick={handleOnChangeItem}
               type="button"
               title="salvar"
-              disabled={!defaultValue?.id}
               className="leading-6 w-11 z-50 text-gray-900 rounded-md bg-white px-3 py-2 text-sm font-semibold shadow-sm transition-colors hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
             >
               <svg
