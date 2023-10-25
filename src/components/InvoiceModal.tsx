@@ -5,6 +5,7 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import CpfCnpjInput from "./inputs/CpfCnpjInput";
 import ConfirmationModal from "./ConfirmationModal";
+import EditItemsListInput from "./inputs/ItemsList/EditItemsListInput";
 
 export const editInvoiceValidationSchema = z.object({
   enterpriseCnpj: z
@@ -164,8 +165,7 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
                   Itens da Nota
                 </h2>
                 <div className="mt-1 text-sm leading-6 text-gray-600">
-                  We will always let you know about imdivortant changes, but you
-                  divick what else you want to hear about.
+                  <EditItemsListInput value={invoice?.items} />
                 </div>
               </div>
             </div>
