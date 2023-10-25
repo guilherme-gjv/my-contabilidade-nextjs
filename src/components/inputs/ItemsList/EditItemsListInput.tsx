@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { IInvoiceItemWithInfoId } from "./CreateItem";
 import EditItem from "./EditItem";
@@ -14,8 +14,6 @@ interface ListingItemsInputProps {
 
 const EditItemsListInput: React.FC<ListingItemsInputProps> = ({
   value = [],
-  onRemoveClick,
-  onClickSave,
   onChange,
 }) => {
   //* states
@@ -26,13 +24,6 @@ const EditItemsListInput: React.FC<ListingItemsInputProps> = ({
   );
   const [editedItems, setEditedItems] = useState<IInvoiceItemWithInfoId[]>([]);
   const [newItems, setNewItems] = useState<IInvoiceItemWithInfoId[]>([]);
-
-  useEffect(() => {
-    console.log("deleted: ", deletedItems);
-    console.log("edited: ", editedItems);
-    console.log("new: ", newItems);
-    console.log("displayedItems: ", displayedItems);
-  }, [deletedItems, editedItems, newItems, displayedItems]);
 
   //* memos
   const valuesWithId = useMemo(
@@ -90,8 +81,16 @@ const EditItemsListInput: React.FC<ListingItemsInputProps> = ({
             );
             if (!alreadyEditedItem) {
               let array = editedItems || [];
-              array.push(data);
-              return array.slice();
+              const foundIndex = editedItems.findIndex(
+                (item) => item.id === data.id
+              );
+              if (foundIndex === -1) {
+                array.push(data);
+                return array.slice();
+              } else {
+                array[foundIndex] = data;
+                return array.slice();
+              }
             } else {
               return editedItems.slice();
             }
@@ -134,18 +133,8 @@ const EditItemsListInput: React.FC<ListingItemsInputProps> = ({
   const handleDeleteNewItem = useCallback(
     (id: string) => {
       const updateNewItems = newItems.filter((item) => {
-        console.log(item.info_id !== id);
-        console.log(item.info_id);
-        console.log(id);
-
         return item.info_id !== id;
       });
-      console.log("updt:");
-      console.log("id: ", id);
-      //console.log('');
-
-      console.log(updateNewItems);
-
       const updateDisplayedItems = displayedItems.filter(
         (item) => item.info_id !== id
       );
@@ -220,7 +209,6 @@ const EditItemsListInput: React.FC<ListingItemsInputProps> = ({
               info_id: item.item.info_id || item.id,
             }}
             newItemLabel="Salvar"
-            //onClickSave={handleOnClickSave}
             onChangeItem={handleChangeItem}
             onDelete={onDelete}
             onDeleteNewItem={handleDeleteNewItem}
