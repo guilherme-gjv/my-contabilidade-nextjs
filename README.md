@@ -22,3 +22,7 @@ https://my-contabilidade.vercel.app/
 
 ## Features e Bugs
 Se sinta livre para contribuir criando issues ou com códigos aqui no repo :D
+
+*🐱 lovely Cat avatars by https://robohash.org
+check out
+https://github.com/e1ven/Robohash
