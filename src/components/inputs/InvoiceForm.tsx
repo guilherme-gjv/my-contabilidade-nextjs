@@ -1,9 +1,10 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useCallback } from "react";
 import { z } from "zod";
 import CpfCnpjInput from "./CpfCnpjInput";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import ItemsListInput from "./ItemsList/ItemsListInput";
 
 export const invoiceValidationSchema = z.object({
   enterpriseCnpj: z
@@ -15,6 +16,17 @@ export const invoiceValidationSchema = z.object({
   description: z
     .string({ description: "O campo 'description' deve ser string." })
     .optional(),
+  items: z
+    .object({
+      price: z.number({ required_error: "O preço é obrigatório." }),
+      name: z
+        .string({
+          required_error: "O campo 'name' é obrigatório.",
+          description: "O campo 'name' deve ser string.",
+        })
+        .min(1, "O campo nome é obrigatório."),
+    })
+    .array(),
 });
 export type ICreateInvoiceFormData = z.infer<typeof invoiceValidationSchema>;
 
@@ -34,10 +46,20 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
     register,
     handleSubmit,
     control,
+    reset,
     formState: { errors },
   } = useForm<ICreateInvoiceFormData>({
     resolver: zodResolver(invoiceValidationSchema),
   });
+
+  //* callbacks
+  const handleOnSubmit = useCallback(
+    (data: ICreateInvoiceFormData) => {
+      onSubmit(data);
+      reset();
+    },
+    [onSubmit, reset]
+  );
 
   //* render
   return (
@@ -57,7 +79,7 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
           className="fixed z-30 top-28 left-1/2 transform -translate-x-1/2 -translate-y-20 bg-white w-[90%] sm:w-3/4 h-[90vh] overflow-y-auto p-4 rounded-lg shadow-lg"
           onClose={onClose}
         >
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(handleOnSubmit)}>
             <div className="space-y-12">
               <div className="border-b border-gray-900/10 pb-8">
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -124,19 +146,33 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
               </div>
               <div className="border-b border-gray-900/10 pb-12">
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Notifications
+                  Itens da Nota
                 </h2>
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                  We will always let you know about important changes, but you
-                  pick what else you want to hear about.
-                </p>
+                <div className="mt-1 text-sm leading-6 text-gray-600">
+                  <Controller
+                    name="items"
+                    control={control}
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <ItemsListInput onChange={onChange} value={value} />
+                      );
+                    }}
+                  />
+                </div>
               </div>
             </div>
 
             <div className="mt-6 flex items-center justify-end gap-x-6">
               <button
                 type="button"
-                onClick={() => onClose()}
+                onClick={() => {
+                  onClose();
+                  reset({
+                    items: [],
+                    description: "",
+                    enterpriseCnpj: undefined,
+                  });
+                }}
                 className="text-sm font-semibold leading-6 text-gray-900"
               >
                 Cancelar

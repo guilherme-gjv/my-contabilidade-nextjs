@@ -10,11 +10,15 @@ import { Menu } from "@headlessui/react";
 import TableComponent from "@/components/DataTable";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import tableData from "@/partials/tableColumns/invoices";
-import InvoiceModal, { IEditInvoiceFormData } from "@/components/InvoiceModal";
+import InvoiceModal, {
+  IChangedItemsData,
+  IEditInvoiceFormData,
+} from "@/components/InvoiceModal";
 import InvoiceForm, {
   ICreateInvoiceFormData,
 } from "@/components/inputs/InvoiceForm";
 import { CustomToastTypes, customToast } from "@/services/customToast";
+import { IInvoiceItemWithInfoId } from "@/components/inputs/ItemsList/CreateItem";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -134,7 +138,7 @@ const Home: React.FC<{
   );
 
   const onSubmitCreateForm = useCallback(
-    async ({ enterpriseCnpj, description }: ICreateInvoiceFormData) => {
+    async ({ description, enterpriseCnpj, items }: ICreateInvoiceFormData) => {
       const { updateToast } = customToast(
         "Criando Nota Fiscal",
         CustomToastTypes.LOADING
@@ -147,6 +151,11 @@ const Home: React.FC<{
         const { data } = await api.post<{ data: IInvoice }>(
           "/invoice",
           requestData
+        );
+
+        await api.post<{ data: IInvoiceItem }>(
+          `/invoice/${data.data.id}/items`,
+          items
         );
         updateToast({
           render: "Nota registrada!",
@@ -171,7 +180,8 @@ const Home: React.FC<{
 
   const onSubmitEditForm = async (
     id: number,
-    { enterpriseCnpj, description }: IEditInvoiceFormData
+    { enterpriseCnpj, description }: IEditInvoiceFormData,
+    { newItems, editedItems, deletedItems }: IChangedItemsData
   ) => {
     const { updateToast } = customToast(
       "Atualizando dados da Nota Fiscal",
@@ -180,7 +190,41 @@ const Home: React.FC<{
     try {
       let requestData = { enterpriseCnpj, description };
 
-      await api.put<{ data: IInvoice }>("/invoice/" + id, requestData);
+      const { data } = await api.put<{ data: IInvoice }>(
+        "/invoice/" + id,
+        requestData
+      );
+      if (newItems && newItems.length > 0) {
+        const requestNewItems = newItems.map((item) => ({
+          price: item.price,
+          name: item.name,
+        }));
+        await api.post<{ count: number }>(
+          `/invoice/${data.data.id}/items`,
+          requestNewItems
+        );
+      }
+
+      if (editedItems && editedItems.length > 0) {
+        const requestEditedItems = editedItems.map((item) => ({
+          id: item.id,
+          price: item.price,
+          name: item.name,
+        }));
+        await api.put<{ count: number }>(
+          `/invoice/${data.data.id}/items`,
+          requestEditedItems
+        );
+      }
+
+      if (deletedItems && deletedItems.length > 0) {
+        for (const item of deletedItems) {
+          await api.delete<{ count: number }>(
+            `/invoice/${data.data.id}/item/${item.id}`
+          );
+        }
+      }
+
       updateToast({
         render: "Nota atualizada!",
         type: "success",
@@ -263,7 +307,9 @@ const Home: React.FC<{
               <Menu.Button>
                 <img
                   className="w-16 h-16 rounded-full object-cover"
-                  src="https://github.com/guilherme-gjv.png"
+                  src={`https://robohash.org/${
+                    user ? user?.email : "user"
+                  }?set=set4`}
                   alt="user-photo"
                   title="profile photo"
                 />

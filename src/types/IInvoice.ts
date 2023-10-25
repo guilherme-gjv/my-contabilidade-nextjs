@@ -3,7 +3,7 @@ interface IInvoice {
   userId: number;
   enterpriseCnpj?: string;
   description?: string;
-  items: any[];
+  items: IInvoiceItem[];
   createdAt: string;
   updatedAt: string;
 }

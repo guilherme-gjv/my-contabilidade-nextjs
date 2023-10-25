@@ -1,10 +1,12 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import CpfCnpjInput from "./inputs/CpfCnpjInput";
 import ConfirmationModal from "./ConfirmationModal";
+import EditItemsListInput from "./inputs/ItemsList/EditItemsListInput";
+import { IInvoiceItemWithInfoId } from "./inputs/ItemsList/CreateItem";
 
 export const editInvoiceValidationSchema = z.object({
   enterpriseCnpj: z
@@ -18,10 +20,20 @@ export const editInvoiceValidationSchema = z.object({
     .optional(),
 });
 export type IEditInvoiceFormData = z.infer<typeof editInvoiceValidationSchema>;
+export interface IChangedItemsData {
+  newItems?: IInvoiceItemWithInfoId[];
+  editedItems?: IInvoiceItemWithInfoId[];
+  deletedItems?: IInvoiceItemWithInfoId[];
+}
+
 interface InvoiceModalProps {
   invoice?: IInvoice;
   isOpen: boolean;
-  onSubmit: (id: number, data: IEditInvoiceFormData) => void;
+  onSubmit: (
+    id: number,
+    data: IEditInvoiceFormData,
+    editedItems: IChangedItemsData
+  ) => void;
   onClose: () => void;
   onDelete: (id: number) => void;
 }
@@ -35,6 +47,11 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
 }) => {
   //* states
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [changedItems, setChangedItems] = useState<IChangedItemsData>({
+    deletedItems: [],
+    editedItems: [],
+    newItems: [],
+  });
 
   //* hooks
   const {
@@ -60,9 +77,27 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
   }, [invoice, reset]);
 
   //* callback
-  const onSubmitWithId = (data: IEditInvoiceFormData) => {
-    onSubmit(invoice ? invoice.id : -1, data);
-  };
+  const onSubmitWithId = useCallback(
+    (data: IEditInvoiceFormData) => {
+      onSubmit(invoice ? invoice.id : -1, data, changedItems);
+    },
+    [changedItems, invoice, onSubmit]
+  );
+
+  const handleOnChangeItems = useCallback(
+    (
+      newItems?: IInvoiceItemWithInfoId[],
+      editedItems?: IInvoiceItemWithInfoId[],
+      deletedItems?: IInvoiceItemWithInfoId[]
+    ) => {
+      setChangedItems({
+        newItems,
+        editedItems,
+        deletedItems,
+      });
+    },
+    []
+  );
 
   //* render
   return (
@@ -161,12 +196,14 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
               </div>
               <div className="border-b border-gray-900/10 pb-12">
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Notifications
+                  Itens da Nota
                 </h2>
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                  We will always let you know about important changes, but you
-                  pick what else you want to hear about.
-                </p>
+                <div className="mt-1 text-sm leading-6 text-gray-600">
+                  <EditItemsListInput
+                    value={invoice?.items}
+                    onChangeItems={handleOnChangeItems}
+                  />
+                </div>
               </div>
             </div>
             <div className="mt-6 flex items-center justify-end gap-x-3">
