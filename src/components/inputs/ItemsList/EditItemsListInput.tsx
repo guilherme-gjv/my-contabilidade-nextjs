@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { IInvoiceItemWithInfoId } from "./CreateItem";
 import EditItem from "./EditItem";
@@ -10,10 +10,16 @@ interface ListingItemsInputProps {
   onRemoveClick?: (id: string) => void;
   /** Callback called by clicking the add button passing the input content on the param.  */
   onChange?: (value: IInvoiceItemWithInfoId[]) => void;
+  onChangeItems?: (
+    newItems?: IInvoiceItemWithInfoId[],
+    editedItems?: IInvoiceItemWithInfoId[],
+    deletedItems?: IInvoiceItemWithInfoId[]
+  ) => void;
 }
 
 const EditItemsListInput: React.FC<ListingItemsInputProps> = ({
   value = [],
+  onChangeItems,
   onChange,
 }) => {
   //* states
@@ -24,6 +30,18 @@ const EditItemsListInput: React.FC<ListingItemsInputProps> = ({
   );
   const [editedItems, setEditedItems] = useState<IInvoiceItemWithInfoId[]>([]);
   const [newItems, setNewItems] = useState<IInvoiceItemWithInfoId[]>([]);
+
+  //* lifecycle
+  useEffect(() => {
+    console.log("effect list");
+    console.log("newItems", newItems);
+
+    console.log("editedItems", editedItems);
+
+    console.log("deletedItems", deletedItems);
+
+    onChangeItems && onChangeItems(newItems, editedItems, deletedItems);
+  }, [newItems, editedItems, deletedItems, onChangeItems]);
 
   //* memos
   const valuesWithId = useMemo(
@@ -143,41 +161,6 @@ const EditItemsListInput: React.FC<ListingItemsInputProps> = ({
     },
     [displayedItems, newItems]
   );
-
-  const handleOnClickSave = useCallback((data: IInvoiceItemWithInfoId) => {
-    valuesWithId.find((item, index) => {
-      if (
-        item.item.id &&
-        item.item.id === data.id &&
-        (item.item.price !== data.price || item.item.name !== data.name)
-      ) {
-        setEditedItems((items) => {
-          let array = items || [];
-          array.push(data);
-          return array.slice();
-        });
-        setDisplayedItems((items) => {
-          const array = items || [];
-          array.splice(index, 1, data);
-          return array.slice();
-        });
-        return true;
-      } else {
-        setNewItems((items) => {
-          let array = items || [];
-          array.push(data);
-          return array.slice();
-        });
-        setDisplayedItems((items) => {
-          let array = items || [];
-          array.push(data);
-          return array.slice();
-        });
-        return false;
-      }
-    });
-    onChange && onChange([...value, data]);
-  }, []);
 
   //* render
   return (

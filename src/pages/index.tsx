@@ -10,7 +10,10 @@ import { Menu } from "@headlessui/react";
 import TableComponent from "@/components/DataTable";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import tableData from "@/partials/tableColumns/invoices";
-import InvoiceModal, { IEditInvoiceFormData } from "@/components/InvoiceModal";
+import InvoiceModal, {
+  IChangedItemsData,
+  IEditInvoiceFormData,
+} from "@/components/InvoiceModal";
 import InvoiceForm, {
   ICreateInvoiceFormData,
 } from "@/components/inputs/InvoiceForm";
@@ -177,7 +180,8 @@ const Home: React.FC<{
 
   const onSubmitEditForm = async (
     id: number,
-    { enterpriseCnpj, description }: IEditInvoiceFormData
+    { enterpriseCnpj, description }: IEditInvoiceFormData,
+    { newItems, editedItems, deletedItems }: IChangedItemsData
   ) => {
     const { updateToast } = customToast(
       "Atualizando dados da Nota Fiscal",
@@ -186,7 +190,47 @@ const Home: React.FC<{
     try {
       let requestData = { enterpriseCnpj, description };
 
-      await api.put<{ data: IInvoice }>("/invoice/" + id, requestData);
+      const { data } = await api.put<{ data: IInvoice }>(
+        "/invoice/" + id,
+        requestData
+      );
+      console.log("newItems", newItems);
+      if (newItems && newItems.length > 0) {
+        const requestNewItems = newItems.map((item) => ({
+          price: item.price,
+          name: item.name,
+        }));
+        console.log("requestNewItems", requestNewItems);
+        const response = await api.post<{ count: number }>(
+          `/invoice/${data.data.id}/items`,
+          requestNewItems
+        );
+        console.log("response", response);
+      }
+      console.log("editedItems", editedItems);
+
+      if (editedItems && editedItems.length > 0) {
+        const requestEditedItems = editedItems.map((item) => ({
+          id: item.price,
+          price: item.price,
+          name: item.name,
+        }));
+        await api.put<{ count: number }>(
+          `/invoice/${data.data.id}/items`,
+          requestEditedItems
+        );
+      }
+
+      console.log("deletedItems", deletedItems);
+
+      if (deletedItems && deletedItems.length > 0) {
+        for (const item of deletedItems) {
+          await api.delete<{ count: number }>(
+            `/invoice/${data.data.id}/item/${item.id}`
+          );
+        }
+      }
+
       updateToast({
         render: "Nota atualizada!",
         type: "success",
