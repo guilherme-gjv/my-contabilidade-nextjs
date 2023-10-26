@@ -331,11 +331,11 @@ const Home: React.FC<{
                     {user ? user.email : ""}
                   </p>
                 </div>
-                <Menu.Item>
+                {/* {<Menu.Item>
                   <button className="h-10 px-2 w-full hover:bg-gray-100 transition-colors">
                     Editar Perfil
                   </button>
-                </Menu.Item>
+                </Menu.Item>} */}
                 <Menu.Item>
                   <button
                     onClick={signOut}
@@ -368,7 +368,7 @@ const Home: React.FC<{
                 Notas Fiscais
               </h2>
               <div className="flex flex-col-reverse w-full sm:w-auto sm:flex-row justify-between gap-y-5 sm:gap-y-0 sm:gap-x-2">
-                <div className="flex bg-gray-50 items-center p-2 rounded-md">
+                {/* {<div className="flex bg-gray-50 items-center p-2 rounded-md">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5 text-gray-400"
@@ -386,7 +386,7 @@ const Home: React.FC<{
                     type="text"
                     placeholder="pesquisar..."
                   />
-                </div>
+                </div>} */}
                 <button
                   onClick={() => setInvoiceFormIsOpen(true)}
                   className="bg-indigo-600 px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer"
@@ -418,7 +418,7 @@ const Home: React.FC<{
               }
             ></TableComponent>
           </div>
-          <div className="mt-8 flex flex-wrap space-x-0 space-y-2 md:space-x-4 md:space-y-0">
+          {/* {<div className="mt-8 flex flex-wrap space-x-0 space-y-2 md:space-x-4 md:space-y-0">
             <div className="flex-1 bg-white p-4 shadow rounded-lg md:w-1/2">
               <h2 className="text-gray-500 text-lg font-semibold pb-1">
                 Gastos este mês
@@ -432,7 +432,7 @@ const Home: React.FC<{
                 <canvas id="usersChart"></canvas>
               </div>
             </div>
-          </div>
+          </div>} */}
         </div>
       </div>
     </div>
