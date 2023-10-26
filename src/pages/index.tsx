@@ -308,7 +308,7 @@ const Home: React.FC<{
         <div className="flex items-center justify-between  w-full">
           <div className="flex items-center">
             <img
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+              src="https://clipartcraft.com/images/transparent-emojis-money.png"
               alt="Logo"
               className="w-16 h-16 object-contain rounded-full mr-2"
             />

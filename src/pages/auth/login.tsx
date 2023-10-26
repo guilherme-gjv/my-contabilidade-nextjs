@@ -83,9 +83,12 @@ const Login: React.FC = () => {
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+        <h2 className="font-thin italic text-xl text-center">
+          My Contabilidade
+        </h2>
         <img
           className="mx-auto h-10 w-auto"
-          src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+          src="https://clipartcraft.com/images/transparent-emojis-money.png"
           width={100}
           height={100}
           alt="Your Company"
