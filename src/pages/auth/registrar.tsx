@@ -2,7 +2,7 @@ import { CustomToastTypes, customToast } from "@/services/customToast";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { parseCookies } from "nookies";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,6 +10,7 @@ import { getErrorMessage } from "@/functions/getErrorMessage";
 import Link from "next/link";
 import { api } from "@/services/api";
 import CpfCnpjInput from "@/components/inputs/CpfCnpjInput";
+import clsx from "clsx";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { "mycontabilidade.token": token } = parseCookies(ctx);
@@ -72,6 +73,10 @@ const Signup: React.FC = () => {
     control,
     formState: { errors },
   } = useForm<ISignupFormData>({ resolver: zodResolver(validationSchema) });
+
+  //* states
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   //* callbacks
   const handleOnSubmit = useCallback(
@@ -164,6 +169,7 @@ const Signup: React.FC = () => {
                 required
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
+
               {errors.email && (
                 <p className="mt-1 text-red-500">{errors.email?.message}</p>
               )}
@@ -212,11 +218,22 @@ const Signup: React.FC = () => {
               <input
                 id="password"
                 {...register("password")}
-                type="password"
+                type={showPassword ? "text" : "password"}
                 autoComplete="password"
                 required
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
+              <div className="flex gap-x-2 mt-1 w-full justify-end">
+                <p className="text-sm">Mostrar senha</p>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((show) => !show)}
+                  className={clsx(
+                    showPassword ? "" : "bg-indigo-600",
+                    "right-1.5 rounded-full border border-indigo-600 w-5 h-5"
+                  )}
+                ></button>
+              </div>
               {errors.password && (
                 <p className="mt-1 text-red-500">{errors.password?.message}</p>
               )}
@@ -243,11 +260,22 @@ const Signup: React.FC = () => {
               <input
                 id="confirm_password"
                 {...register("confirm_password")}
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 autoComplete="confirm_password"
                 required
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
+              <div className="flex gap-x-2 mt-1 w-full justify-end">
+                <p className="text-sm">Mostrar senha</p>
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((show) => !show)}
+                  className={clsx(
+                    showConfirmPassword ? "" : "bg-indigo-600",
+                    "right-1.5 rounded-full border border-indigo-600 w-5 h-5"
+                  )}
+                ></button>
+              </div>
               {errors.confirm_password && (
                 <p className="mt-1 text-red-500">
                   {errors.confirm_password?.message}
