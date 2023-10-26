@@ -107,7 +107,7 @@ const Home: React.FC<{
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalData, setModalData] = useState<IInvoice>();
 
-  const { push } = useRouter();
+  const { push, asPath } = useRouter();
 
   useEffect(() => {
     setList(invoices as IInvoice[]);
@@ -139,6 +139,8 @@ const Home: React.FC<{
 
   const onSubmitCreateForm = useCallback(
     async ({ description, enterpriseCnpj, items }: ICreateInvoiceFormData) => {
+      console.log("chegou aq");
+
       const { updateToast } = customToast(
         "Criando Nota Fiscal",
         CustomToastTypes.LOADING
@@ -153,18 +155,22 @@ const Home: React.FC<{
           requestData
         );
 
-        await api.post<{ data: IInvoiceItem }>(
-          `/invoice/${data.data.id}/items`,
-          items
-        );
+        if (items) {
+          await api.post<{ data: IInvoiceItem }>(
+            `/invoice/${data.data.id}/items`,
+            items
+          );
+        }
         updateToast({
           render: "Nota registrada!",
           type: "success",
           isLoading: false,
           autoClose: 5000,
         });
-        push("/");
+        push(asPath);
       } catch (error) {
+        console.log(error);
+
         updateToast({
           render:
             "Houve um erro no registro da nota! " + getErrorMessage(error),
@@ -175,101 +181,107 @@ const Home: React.FC<{
       }
       setInvoiceFormIsOpen(false);
     },
-    []
+    [push, asPath]
   );
 
-  const onSubmitEditForm = async (
-    id: number,
-    { enterpriseCnpj, description }: IEditInvoiceFormData,
-    { newItems, editedItems, deletedItems }: IChangedItemsData
-  ) => {
-    const { updateToast } = customToast(
-      "Atualizando dados da Nota Fiscal",
-      CustomToastTypes.LOADING
-    );
-    try {
-      let requestData = { enterpriseCnpj, description };
-
-      const { data } = await api.put<{ data: IInvoice }>(
-        "/invoice/" + id,
-        requestData
+  const onSubmitEditForm = useCallback(
+    async (
+      id: number,
+      { enterpriseCnpj, description }: IEditInvoiceFormData,
+      { newItems, editedItems, deletedItems }: IChangedItemsData
+    ) => {
+      const { updateToast } = customToast(
+        "Atualizando dados da Nota Fiscal",
+        CustomToastTypes.LOADING
       );
-      if (newItems && newItems.length > 0) {
-        const requestNewItems = newItems.map((item) => ({
-          price: item.price,
-          name: item.name,
-        }));
-        await api.post<{ count: number }>(
-          `/invoice/${data.data.id}/items`,
-          requestNewItems
-        );
-      }
+      try {
+        let requestData = { enterpriseCnpj, description };
 
-      if (editedItems && editedItems.length > 0) {
-        const requestEditedItems = editedItems.map((item) => ({
-          id: item.id,
-          price: item.price,
-          name: item.name,
-        }));
-        await api.put<{ count: number }>(
-          `/invoice/${data.data.id}/items`,
-          requestEditedItems
+        const { data } = await api.put<{ data: IInvoice }>(
+          "/invoice/" + id,
+          requestData
         );
-      }
-
-      if (deletedItems && deletedItems.length > 0) {
-        for (const item of deletedItems) {
-          await api.delete<{ count: number }>(
-            `/invoice/${data.data.id}/item/${item.id}`
+        if (newItems && newItems.length > 0) {
+          const requestNewItems = newItems.map((item) => ({
+            price: item.price,
+            name: item.name,
+          }));
+          await api.post<{ count: number }>(
+            `/invoice/${data.data.id}/items`,
+            requestNewItems
           );
         }
+
+        if (editedItems && editedItems.length > 0) {
+          const requestEditedItems = editedItems.map((item) => ({
+            id: item.id,
+            price: item.price,
+            name: item.name,
+          }));
+          await api.put<{ count: number }>(
+            `/invoice/${data.data.id}/items`,
+            requestEditedItems
+          );
+        }
+
+        if (deletedItems && deletedItems.length > 0) {
+          for (const item of deletedItems) {
+            await api.delete<{ count: number }>(
+              `/invoice/${data.data.id}/item/${item.id}`
+            );
+          }
+        }
+
+        updateToast({
+          render: "Nota atualizada!",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
+        push(asPath);
+      } catch (error) {
+        updateToast({
+          render:
+            "Houve um erro na atualização da Nota Fiscal! " +
+            getErrorMessage(error),
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
       }
+      setModalIsOpen(false);
+    },
+    [asPath, push]
+  );
 
-      updateToast({
-        render: "Nota atualizada!",
-        type: "success",
-        isLoading: false,
-        autoClose: 5000,
-      });
-      push("/");
-    } catch (error) {
-      updateToast({
-        render:
-          "Houve um erro na atualização da Nota Fiscal! " +
-          getErrorMessage(error),
-        type: "error",
-        isLoading: false,
-        autoClose: 5000,
-      });
-    }
-    setModalIsOpen(false);
-  };
-
-  const handleOnDelete = async (id: number) => {
-    const { updateToast } = customToast(
-      "Deletando Nota Fiscal",
-      CustomToastTypes.LOADING
-    );
-    try {
-      await api.delete<{ data: IInvoice }>("/invoice/" + id);
-      updateToast({
-        render: "Nota deletada!",
-        type: "success",
-        isLoading: false,
-        autoClose: 5000,
-      });
-      push("/");
-    } catch (error) {
-      updateToast({
-        render:
-          "Houve um erro ao deletar Nota Fiscal! " + getErrorMessage(error),
-        type: "error",
-        isLoading: false,
-        autoClose: 5000,
-      });
-    }
-    setModalIsOpen(false);
-  };
+  const handleOnDelete = useCallback(
+    async (id: number) => {
+      const { updateToast } = customToast(
+        "Deletando Nota Fiscal",
+        CustomToastTypes.LOADING
+      );
+      try {
+        await api.delete<{ data: IInvoice }>("/invoice/" + id);
+        updateToast({
+          render: "Nota deletada!",
+          type: "success",
+          isLoading: false,
+          autoClose: 5000,
+        });
+        push(asPath);
+      } catch (error) {
+        updateToast({
+          render:
+            "Houve um erro ao deletar Nota Fiscal! " + getErrorMessage(error),
+          type: "error",
+          isLoading: false,
+          autoClose: 5000,
+        });
+      }
+      setModalIsOpen(false);
+    },
+    [asPath, push]
+  );
 
   useEffect(() => {
     handleOnRequestSearch();

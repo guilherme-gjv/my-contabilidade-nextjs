@@ -26,7 +26,8 @@ export const invoiceValidationSchema = z.object({
         })
         .min(1, "O campo nome é obrigatório."),
     })
-    .array(),
+    .array()
+    .optional(),
 });
 export type ICreateInvoiceFormData = z.infer<typeof invoiceValidationSchema>;
 
