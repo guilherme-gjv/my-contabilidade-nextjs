@@ -51,7 +51,7 @@ const tableData: ColumnDef<TableColumn>[] = [
         ),
         cell: (info) => (
           <div className="flex font-thin flex-row items-center justify-start gap-2">
-            {info?.row?.original.value}
+            ${info?.row?.original.value}
           </div>
         ),
         accessorFn: (row) => row.value,
