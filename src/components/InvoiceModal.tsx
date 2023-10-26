@@ -1,12 +1,13 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import CpfCnpjInput from "./inputs/CpfCnpjInput";
 import ConfirmationModal from "./ConfirmationModal";
 import EditItemsListInput from "./inputs/ItemsList/EditItemsListInput";
 import { IInvoiceItemWithInfoId } from "./inputs/ItemsList/CreateItem";
+import { formatDate } from "@/services/dateHandlers";
 
 export const editInvoiceValidationSchema = z.object({
   enterpriseCnpj: z
@@ -52,6 +53,15 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
     editedItems: [],
     newItems: [],
   });
+
+  //* memos
+  const totalValue = useMemo(() => {
+    let value = 0;
+    invoice?.items.forEach((item) => {
+      value += item.price;
+    });
+    return value;
+  }, [invoice]);
 
   //* hooks
   const {
@@ -141,7 +151,86 @@ const InvoiceModal: React.FC<InvoiceModalProps> = ({
                 <h2 className="text-base font-semibold leading-7 text-gray-900">
                   Informações da Nota
                 </h2>
-
+                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="enterpriseCnpj"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Id da Nota
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        type="text"
+                        readOnly
+                        id="id"
+                        value={"#" + (invoice ? invoice.id : "")}
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="description"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Valor Total
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        type="text"
+                        readOnly
+                        id="total_value"
+                        value={"$" + totalValue}
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="enterpriseCnpj"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Criada em
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        type="text"
+                        readOnly
+                        id="id"
+                        value={
+                          invoice && invoice.createdAt
+                            ? formatDate(invoice.createdAt)
+                            : ""
+                        }
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                    </div>
+                  </div>
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="description"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Atualizada em
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        type="text"
+                        readOnly
+                        id="updated_at"
+                        value={
+                          invoice && invoice.updatedAt
+                            ? formatDate(invoice.updatedAt)
+                            : ""
+                        }
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                    </div>
+                  </div>
+                </div>
                 <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                   <div className="sm:col-span-3">
                     <label
