@@ -3,12 +3,13 @@ import { AuthContext } from "@/contexts/AuthContext";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { parseCookies } from "nookies";
-import { useCallback, useContext } from "react";
+import { useCallback, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { getErrorMessage } from "@/functions/getErrorMessage";
 import Link from "next/link";
+import clsx from "clsx";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const { "mycontabilidade.token": token } = parseCookies(ctx);
@@ -50,6 +51,9 @@ const Login: React.FC = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<ILoginFormData>({ resolver: zodResolver(validationSchema) });
+
+  //* states
+  const [showPassword, setShowPassword] = useState(false);
 
   //* callbacks
   const handleOnSubmit = useCallback(
@@ -143,11 +147,22 @@ const Login: React.FC = () => {
               <input
                 id="password"
                 {...register("password")}
-                type="password"
+                type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
                 required
                 className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
               />
+              <div className="flex gap-x-2 mt-1 w-full justify-end">
+                <p className="text-sm">Mostrar senha</p>
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((show) => !show)}
+                  className={clsx(
+                    showPassword ? "" : "bg-indigo-600",
+                    "right-1.5 rounded-full border border-indigo-600 w-5 h-5"
+                  )}
+                ></button>
+              </div>
               {errors.password && (
                 <p className="mt-1 text-red-500">{errors.password?.message}</p>
               )}
