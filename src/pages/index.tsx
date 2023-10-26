@@ -18,7 +18,6 @@ import InvoiceForm, {
   ICreateInvoiceFormData,
 } from "@/components/inputs/InvoiceForm";
 import { CustomToastTypes, customToast } from "@/services/customToast";
-import { IInvoiceItemWithInfoId } from "@/components/inputs/ItemsList/CreateItem";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -319,9 +318,9 @@ const Home: React.FC<{
               <Menu.Button>
                 <img
                   className="w-16 h-16 rounded-full object-cover"
-                  src={`https://robohash.org/${
-                    user ? user?.email : "user"
-                  }?set=set4`}
+                  src={
+                    user ? `https://robohash.org/${user?.email}?set=set4` : ""
+                  }
                   alt="user-photo"
                   title="profile photo"
                 />
