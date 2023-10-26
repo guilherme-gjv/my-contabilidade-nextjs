@@ -31,8 +31,8 @@ const ItemsListInput: React.FC<ListingItemsInputProps> = ({
   return (
     <div className="flex flex-col gap-y-3 border border-gray-300 text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 w-full ">
       <div className="flex flex-wrap gap-x-2 gap-y-2">
-        <div className="flex justify-between px-3 gap-x-5 w-full pt-3">
-          <div className="sm:col-span-3 w-1/2">
+        <div className="flex justify-between px-3 gap-x-1 sm:gap-x-5 w-full pt-3">
+          <div className="sm:col-span-3 w-full sm:w-1/2">
             <label
               htmlFor="description"
               className="block text-sm font-medium leading-6 text-gray-900"
@@ -40,7 +40,7 @@ const ItemsListInput: React.FC<ListingItemsInputProps> = ({
               Nome
             </label>
           </div>
-          <div className="sm:col-span-3 w-1/2">
+          <div className="sm:col-span-3 w-full sm:w-1/2">
             <label
               htmlFor="description"
               className="block text-sm font-medium leading-6 text-gray-900"
